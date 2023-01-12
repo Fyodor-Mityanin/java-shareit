@@ -45,23 +45,11 @@ public class UserRepository {
         }
     }
 
-    public User updateUser(User user) {
+    public User update(User user) {
         String sql = "UPDATE USERS SET NAME=?, EMAIL=? WHERE ID=?";
         int rowNum = jdbcTemplate.update(sql, user.getName(), user.getEmail(), user.getId());
         log.info("updateUser: {} строк обновлено", rowNum);
         return user;
-    }
-
-    public void updateEmail(Long id, String email) {
-        String sql = "UPDATE USERS SET EMAIL=? WHERE ID=?";
-        int rowNum = jdbcTemplate.update(sql, email, id);
-        log.info("updateEmail: {} строк обновлено", rowNum);
-    }
-
-    public void updateName(Long id, String name) {
-        String sql = "UPDATE USERS SET NAME=? WHERE ID=?";
-        int rowNum = jdbcTemplate.update(sql, name, id);
-        log.info("updateName: {} строк обновлено", rowNum);
     }
 
     public List<User> getAll() {

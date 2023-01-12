@@ -31,16 +31,16 @@ public class UserValidation {
         }
     }
 
-    public void validateUpdate(UserDto userDto) {
+    public User validateUpdateAndGet(UserDto userDto) {
         if (userDto.getEmail() == null && userDto.getName() == null) {
             throw new UserValidationException("Юзер с пустыми полями");
         }
         if (userDto.getEmail() != null && userRepository.containsEmail(userDto.getEmail())) {
             throw new UserDuplicateEmailException(String.format("Юзер с email %s уже существует", userDto.getEmail()));
         }
-        if (!userRepository.containsId(userDto.getId())) {
-            throw new UserNotFoundException(String.format("Юзер с id %d не найден", userDto.getId()));
-        }
+        return userRepository.getUserById(userDto.getId()).orElseThrow(
+                () -> new UserNotFoundException(String.format("Юзер с id %d не найден", userDto.getId()))
+        );
     }
 
     public void validateDelete(long id) {

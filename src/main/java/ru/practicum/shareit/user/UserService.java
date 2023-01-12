@@ -8,53 +8,48 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
     private final UserValidation userValidation;
 
     @Autowired
     public UserService(
             UserRepository userRepository,
-            UserMapper userMapper,
             UserValidation userValidation
     ) {
         this.userRepository = userRepository;
-        this.userMapper = userMapper;
         this.userValidation = userValidation;
     }
 
     public List<UserDto> getAll() {
-        return userMapper.toDtos(userRepository.getAll());
+        return UserMapper.toDtos(userRepository.getAll());
     }
 
     public UserDto create(UserDto userDto) {
         userValidation.validateCreation(userDto);
-        Long userId = userRepository.add(userMapper.toObject(userDto));
+        Long userId = userRepository.add(UserMapper.toObject(userDto));
         userDto.setId(userId);
         return userDto;
     }
 
     public UserDto update(Long id, UserDto userDto) {
         userDto.setId(id);
-        userValidation.validateUpdate(userDto);
-        User updatedUser;
-        if (userDto.getEmail() != null && userDto.getName() != null) {
-            User user = userMapper.toObject(userDto);
-            updatedUser = userRepository.updateUser(user);
-        } else {
-            if (userDto.getEmail() != null) {
-                userRepository.updateEmail(id, userDto.getEmail());
-            } else {
-                userRepository.updateName(id, userDto.getName());
-            }
-            updatedUser = getById(id);
+        User updatedUser = userValidation.validateUpdateAndGet(userDto);
+        UserDto updatedUserDto = UserMapper.toDto(updatedUser);
+        if (userDto.getName() != null && !Objects.equals(updatedUserDto.getName(), userDto.getName())) {
+            updatedUserDto.setName(userDto.getName());
         }
-        return userMapper.toDto(updatedUser);
+        if (userDto.getEmail() != null && !Objects.equals(updatedUserDto.getEmail(), userDto.getEmail())) {
+            updatedUserDto.setEmail(userDto.getEmail());
+        }
+        updatedUser = UserMapper.toObject(updatedUserDto);
+        updatedUser = userRepository.update(updatedUser);
+        return UserMapper.toDto(updatedUser);
     }
 
     public User getById(Long id) {

@@ -1,28 +1,15 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
 public class ItemMapper {
 
-    private final UserRepository userRepository;
-
-    @Autowired
-    public ItemMapper(
-            UserRepository userRepository
-    ) {
-        this.userRepository = userRepository;
-    }
-
-    public ItemDto toDto(@NonNull Item item) {
+    public static ItemDto toDto(@NonNull Item item) {
         return ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -33,14 +20,13 @@ public class ItemMapper {
                 .build();
     }
 
-    public List<ItemDto> toDtos(@NonNull List<Item> items) {
+    public static List<ItemDto> toDtos(@NonNull List<Item> items) {
         List<ItemDto> dtos = new ArrayList<>();
         items.forEach(item -> dtos.add(toDto(item)));
         return dtos;
     }
 
-    public Item toObject(@NonNull ItemDto itemDto) {
-        User user = userRepository.getUserById(itemDto.getOwner()).orElseThrow();
+    public static Item toObject(@NonNull ItemDto itemDto, User user) {
         return Item.builder()
                 .id(itemDto.getId())
                 .name(itemDto.getName())
@@ -49,7 +35,4 @@ public class ItemMapper {
                 .available(itemDto.getAvailable())
                 .build();
     }
-
-
-
 }

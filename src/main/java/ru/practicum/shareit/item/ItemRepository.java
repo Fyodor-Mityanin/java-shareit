@@ -77,24 +77,6 @@ public class ItemRepository {
                 .build();
     }
 
-    public void updateAvailable(Long id, Boolean available) {
-        String sql = "UPDATE ITEMS SET AVAILABLE=? WHERE ID=?";
-        int rowNum = jdbcTemplate.update(sql, available, id);
-        log.info("updateAvailable: {} строк обновлено", rowNum);
-    }
-
-    public void updateDescription(Long id, String description) {
-        String sql = "UPDATE ITEMS SET DESCRIPTION=? WHERE ID=?";
-        int rowNum = jdbcTemplate.update(sql, description, id);
-        log.info("updateDescription: {} строк обновлено", rowNum);
-    }
-
-    public void updateName(Long id, String name) {
-        String sql = "UPDATE ITEMS SET NAME=? WHERE ID=?";
-        int rowNum = jdbcTemplate.update(sql, name, id);
-        log.info("updateName: {} строк обновлено", rowNum);
-    }
-
     public List<Item> getAllByUserId(Long userId) {
         String sql = "SELECT I.*, U.NAME AS U_NAME, U.EMAIL AS U_EMAIL\n" +
                 "FROM ITEMS I\n" +

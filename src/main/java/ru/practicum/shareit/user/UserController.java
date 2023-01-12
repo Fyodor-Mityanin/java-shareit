@@ -2,8 +2,6 @@ package ru.practicum.shareit.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 
@@ -49,9 +47,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Long> deleteOneById(@PathVariable long id) {
+    public String deleteOneById(@PathVariable long id) {
         log.info("/users/" + id + " deleteOneById");
         userService.delete(id);
-        return new ResponseEntity<>(id, HttpStatus.OK);
+        return id + "deleted";
     }
 }

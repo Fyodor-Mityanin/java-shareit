@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -44,8 +46,12 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchByName(@RequestParam String text) {
+    //тут почему-то NotBlank никак не реагирует на бланк
+    public List<ItemDto> searchByName(@RequestParam @NotBlank String text) {
         log.info("/item/search" + text);
+        if (text.isBlank()) {
+            return Collections.emptyList();
+        }
         return itemService.searchByName(text);
     }
 }

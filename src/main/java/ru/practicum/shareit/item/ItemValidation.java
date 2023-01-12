@@ -38,7 +38,7 @@ public class ItemValidation {
         }
     }
 
-    public void validateUpdate(ItemDto itemDto) {
+    public Item validateUpdateAndGet(ItemDto itemDto) {
         if (itemDto.getOwner() == null) {
             throw new ItemValidationException("Юзер не авторизирован");
         }
@@ -48,5 +48,6 @@ public class ItemValidation {
         if (!itemDto.getOwner().equals(item.getOwner().getId())) {
             throw new ItemOwnershipException("Вы не хозяин предмета");
         }
+        return item;
     }
 }

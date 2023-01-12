@@ -3,40 +3,41 @@ package ru.practicum.shareit.item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.error.exeptions.ItemNotFoundException;
+import ru.practicum.shareit.error.exeptions.UserNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.user.UserValidation;
+import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserRepository;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class ItemService {
 
     private final ItemValidation itemValidation;
-    private final UserValidation userValidation;
     private final ItemRepository itemRepository;
-    private final ItemMapper itemMapper;
+    private final UserRepository userRepository;
 
     @Autowired
     public ItemService(
             ItemValidation itemValidation,
-            UserValidation userValidation,
             ItemRepository itemRepository,
-            ItemMapper itemMapper
+            UserRepository userRepository
     ) {
         this.itemValidation = itemValidation;
-        this.userValidation = userValidation;
         this.itemRepository = itemRepository;
-        this.itemMapper = itemMapper;
+        this.userRepository = userRepository;
     }
 
     public ItemDto create(Long userId, ItemDto itemDto) {
         itemDto.setOwner(userId);
-        userValidation.validateItemCreate(userId);
+        User user = userRepository.getUserById(userId).orElseThrow(
+                () -> new UserNotFoundException(String.format("Юзер с id %d не найден", userId))
+        );
         itemValidation.validateCreation(itemDto);
         itemDto.setOwner(userId);
-        Long itemId = itemRepository.add(itemMapper.toObject(itemDto));
+        Long itemId = itemRepository.add(ItemMapper.toObject(itemDto, user));
         itemDto.setId(itemId);
         return itemDto;
     }
@@ -44,23 +45,23 @@ public class ItemService {
     public ItemDto update(Long userId, Long itemId, ItemDto itemDto) {
         itemDto.setId(itemId);
         itemDto.setOwner(userId);
-        itemValidation.validateUpdate(itemDto);
-        ItemDto updatedItemDto;
-        if (itemDto.getAvailable() != null && itemDto.getDescription() != null && itemDto.getName() != null) {
-            Item item = itemMapper.toObject(itemDto);
-            Item updatedItem = itemRepository.update(item);
-            updatedItemDto = itemMapper.toDto(updatedItem);
-        } else {
-            if (itemDto.getAvailable() != null) {
-                itemRepository.updateAvailable(itemDto.getId(), itemDto.getAvailable());
-            } else if (itemDto.getDescription() != null) {
-                itemRepository.updateDescription(itemDto.getId(), itemDto.getDescription());
-            } else if (itemDto.getName() != null) {
-                itemRepository.updateName(itemDto.getId(), itemDto.getName());
-            }
-            updatedItemDto = getById(itemDto.getId());
+        User user = userRepository.getUserById(userId).orElseThrow(
+                () -> new UserNotFoundException(String.format("Юзер с id %d не найден", userId))
+        );
+        Item updatedItem = itemValidation.validateUpdateAndGet(itemDto);
+        ItemDto updatedItemDto = ItemMapper.toDto(updatedItem);
+        if (itemDto.getAvailable() != null && updatedItemDto.getAvailable() != itemDto.getAvailable()) {
+            updatedItemDto.setAvailable(itemDto.getAvailable());
         }
-        return updatedItemDto;
+        if (itemDto.getDescription() != null && !Objects.equals(updatedItemDto.getDescription(), itemDto.getDescription())) {
+            updatedItemDto.setDescription(itemDto.getDescription());
+        }
+        if (itemDto.getName() != null && !Objects.equals(updatedItemDto.getName(), itemDto.getName())) {
+            updatedItemDto.setName(itemDto.getName());
+        }
+        updatedItem = ItemMapper.toObject(updatedItemDto, user);
+        updatedItem = itemRepository.update(updatedItem);
+        return ItemMapper.toDto(updatedItem);
     }
 
     public ItemDto getById(Long id) {
@@ -68,17 +69,14 @@ public class ItemService {
                 .orElseThrow(
                         () -> new ItemNotFoundException(String.format("Предмет с id %d не найден", id))
                 );
-        return itemMapper.toDto(item);
+        return ItemMapper.toDto(item);
     }
 
     public List<ItemDto> getAllByUserId(Long userId) {
-        return itemMapper.toDtos(itemRepository.getAllByUserId(userId));
+        return ItemMapper.toDtos(itemRepository.getAllByUserId(userId));
     }
 
     public List<ItemDto> searchByName(String text) {
-        if (text.isBlank()) {
-            return Collections.emptyList();
-        }
-        return itemMapper.toDtos(itemRepository.searchByName(text));
+        return ItemMapper.toDtos(itemRepository.searchByName(text));
     }
 }
