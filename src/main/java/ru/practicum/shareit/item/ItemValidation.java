@@ -42,9 +42,10 @@ public class ItemValidation {
         if (itemDto.getOwner() == null) {
             throw new ItemValidationException("Юзер не авторизирован");
         }
-        Item item = itemRepository.getItemById(itemDto.getId()).orElseThrow(
-                () -> new ItemNotFoundException("Товара не существует")
-        );
+        Item item = itemRepository.findById(itemDto.getId())
+                .orElseThrow(
+                        () -> new ItemNotFoundException("Товара не существует")
+                );
         if (!itemDto.getOwner().equals(item.getOwner().getId())) {
             throw new ItemOwnershipException("Вы не хозяин предмета");
         }

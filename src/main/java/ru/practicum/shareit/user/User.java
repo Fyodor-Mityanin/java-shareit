@@ -1,34 +1,50 @@
 package ru.practicum.shareit.user;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 
 /**
  * Класс пользователя
  */
-@Data
-@Builder
+@Entity
+@Table(name = "users")
+@Getter
+@Setter
+@ToString
 public class User {
     /**
      * Уникальный идентификатор пользователя
      */
-    private final Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     /**
      * Имя или логин пользователя
      */
-    @NotBlank
-    private final String name;
+    @Column(nullable = false)
+    private String name;
 
     /**
      * Адрес электронной почты (учтите, что два пользователя не могут иметь одинаковый адрес электронной почты).
      */
-    @NonNull
-    @NotBlank
-    @Email(message = "Почта должна быть валидна")
-    private final String email;
+    @Column(nullable = false, unique = true)
+    @Email
+    private String email;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        return id != null && id.equals(((User) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

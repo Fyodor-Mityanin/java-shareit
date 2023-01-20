@@ -32,20 +32,20 @@ public class ItemService {
 
     public ItemDto create(Long userId, ItemDto itemDto) {
         itemDto.setOwner(userId);
-        User user = userRepository.getUserById(userId).orElseThrow(
+        User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(String.format("Юзер с id %d не найден", userId))
         );
         itemValidation.validateCreation(itemDto);
         itemDto.setOwner(userId);
-        Long itemId = itemRepository.add(ItemMapper.toObject(itemDto, user));
-        itemDto.setId(itemId);
+        Item item = itemRepository.save(ItemMapper.toObject(itemDto, user));
+        itemDto.setId(item.getId());
         return itemDto;
     }
 
     public ItemDto update(Long userId, Long itemId, ItemDto itemDto) {
         itemDto.setId(itemId);
         itemDto.setOwner(userId);
-        User user = userRepository.getUserById(userId).orElseThrow(
+        User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(String.format("Юзер с id %d не найден", userId))
         );
         Item updatedItem = itemValidation.validateUpdateAndGet(itemDto);
@@ -60,12 +60,12 @@ public class ItemService {
             updatedItemDto.setName(itemDto.getName());
         }
         updatedItem = ItemMapper.toObject(updatedItemDto, user);
-        updatedItem = itemRepository.update(updatedItem);
+        updatedItem = itemRepository.save(updatedItem);
         return ItemMapper.toDto(updatedItem);
     }
 
     public ItemDto getById(Long id) {
-        Item item = itemRepository.getItemById(id)
+        Item item = itemRepository.findById(id)
                 .orElseThrow(
                         () -> new ItemNotFoundException(String.format("Предмет с id %d не найден", id))
                 );
@@ -73,10 +73,11 @@ public class ItemService {
     }
 
     public List<ItemDto> getAllByUserId(Long userId) {
-        return ItemMapper.toDtos(itemRepository.getAllByUserId(userId));
+        return ItemMapper.toDtos(itemRepository.findAllByOwnerId(userId));
     }
 
     public List<ItemDto> searchByName(String text) {
-        return ItemMapper.toDtos(itemRepository.searchByName(text));
+        List<Item> items = itemRepository.findAllByNameContainingIgnoreCase(text);
+        return ItemMapper.toDtos(items);
     }
 }

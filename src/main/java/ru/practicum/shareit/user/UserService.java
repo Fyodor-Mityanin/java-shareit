@@ -1,9 +1,13 @@
 package ru.practicum.shareit.user;
 
 import lombok.extern.slf4j.Slf4j;
+import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.error.exeptions.UserDuplicateEmailException;
 import ru.practicum.shareit.error.exeptions.UserNotFoundException;
+import ru.practicum.shareit.error.exeptions.UserValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 
@@ -27,14 +31,25 @@ public class UserService {
     }
 
     public List<UserDto> getAll() {
-        return UserMapper.toDtos(userRepository.getAll());
+        return UserMapper.toDtos(userRepository.findAll());
     }
 
     public UserDto create(UserDto userDto) {
         userValidation.validateCreation(userDto);
-        Long userId = userRepository.add(UserMapper.toObject(userDto));
-        userDto.setId(userId);
-        return userDto;
+        try {
+            User user = userRepository.save(UserMapper.toObject(userDto));
+            return UserMapper.toDto(user);
+        } catch (DataIntegrityViolationException e) {
+            for (Throwable t = e.getCause(); t != null; t = t.getCause()) {
+                if (PSQLException.class.equals(t.getClass())) {
+                    PSQLException postgresException = (PSQLException) t;
+                    if ("23505".equals(postgresException.getSQLState())) {
+                        throw new UserDuplicateEmailException(String.format("Юзер с email %s уже существует", userDto.getEmail()));
+                    }
+                }
+            }
+            throw new UserValidationException("Непредвиденная ошибка");
+        }
     }
 
     public UserDto update(Long id, UserDto userDto) {
@@ -48,12 +63,12 @@ public class UserService {
             updatedUserDto.setEmail(userDto.getEmail());
         }
         updatedUser = UserMapper.toObject(updatedUserDto);
-        updatedUser = userRepository.update(updatedUser);
+        updatedUser = userRepository.save(updatedUser);
         return UserMapper.toDto(updatedUser);
     }
 
     public User getById(Long id) {
-        return userRepository.getUserById(id)
+        return userRepository.findById(id)
                 .orElseThrow(
                         () -> new UserNotFoundException(String.format("Юзер с id %d не найден", id))
                 );

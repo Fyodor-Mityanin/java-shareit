@@ -20,9 +20,6 @@ public class UserValidation {
     }
 
     public void validateCreation(UserDto userDto) {
-        if (userRepository.containsEmail(userDto.getEmail())) {
-            throw new UserDuplicateEmailException(String.format("Юзер с email %s уже существует", userDto.getEmail()));
-        }
         if (userDto.getEmail() == null) {
             throw new UserValidationException("Необходима почта");
         }
@@ -35,22 +32,22 @@ public class UserValidation {
         if (userDto.getEmail() == null && userDto.getName() == null) {
             throw new UserValidationException("Юзер с пустыми полями");
         }
-        if (userDto.getEmail() != null && userRepository.containsEmail(userDto.getEmail())) {
+        if (userDto.getEmail() != null && userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new UserDuplicateEmailException(String.format("Юзер с email %s уже существует", userDto.getEmail()));
         }
-        return userRepository.getUserById(userDto.getId()).orElseThrow(
+        return userRepository.findById(userDto.getId()).orElseThrow(
                 () -> new UserNotFoundException(String.format("Юзер с id %d не найден", userDto.getId()))
         );
     }
 
     public void validateDelete(long id) {
-        if (!userRepository.containsId(id)) {
+        if (userRepository.findById(id).isEmpty()) {
             throw new UserNotFoundException(String.format("Юзер с id %d не найден", id));
         }
     }
 
     public void validateItemCreate(long id) {
-        if (!userRepository.containsId(id)) {
+        if (userRepository.findById(id).isEmpty()) {
             throw new UserNotFoundException(String.format("Юзер с id %d не найден", id));
         }
     }

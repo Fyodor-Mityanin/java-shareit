@@ -27,12 +27,12 @@ public class ItemMapper {
     }
 
     public static Item toObject(@NonNull ItemDto itemDto, User user) {
-        return Item.builder()
-                .id(itemDto.getId())
-                .name(itemDto.getName())
-                .description(itemDto.getDescription())
-                .owner(user)
-                .available(itemDto.getAvailable())
-                .build();
+        Item item = new Item();
+        item.setId(itemDto.getId());
+        item.setName(itemDto.getName());
+        item.setDescription(itemDto.getDescription());
+        item.setOwner(user);
+        item.setAvailable(itemDto.getAvailable());
+        return item;
     }
 }

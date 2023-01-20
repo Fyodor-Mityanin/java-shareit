@@ -1,39 +1,66 @@
 package ru.practicum.shareit.item;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
+
+import javax.persistence.*;
 
 /**
  * Основная сущность сервиса, вокруг которой будет строиться вся дальнейшая работа, — вещь.
  */
-@Data
-@Builder
+@Entity
+@Table(name = "items")
+@Getter
+@Setter
+@ToString
 public class Item {
+
     /**
      * Уникальный идентификатор вещи
      */
-    private final Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     /**
      * Краткое название
      */
-    private final String name;
+    @Column(nullable = false)
+    private String name;
+
     /**
      * Развёрнутое описание;
      */
-    private final String description;
+    @Column
+    private String description;
+
     /**
      * Статус о том, доступна или нет вещь для аренды;
      */
-    private final Boolean available;
-    /**
-     * Владелец вещи;
-     */
-    private final User owner;
-    /**
-     * Если вещь была создана по запросу другого пользователя,
-     * то в этом поле будет храниться ссылка на соответствующий запрос.
-     */
-    private final ItemRequest request;
+    @Column
+    private Boolean available;
+
+
+    @ManyToOne
+    @JoinColumn(nullable = false, name = "owner")
+    private User owner;
+
+    @ManyToOne
+    @JoinColumn(name = "request")
+    private ItemRequest request;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Item)) return false;
+        return id != null && id.equals(((Item) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
