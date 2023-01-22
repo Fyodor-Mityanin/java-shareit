@@ -77,7 +77,7 @@ public class ItemService {
     }
 
     public List<ItemDto> searchByName(String text) {
-        List<Item> items = itemRepository.findAllByDescriptionContainingIgnoreCaseAndAvailableIsTrue(text);
+        List<Item> items = itemRepository.findAllByDescriptionContainingIgnoreCaseAndIsAvailableIsTrue(text);
         return ItemMapper.toDtos(items);
     }
 }

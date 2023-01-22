@@ -40,16 +40,16 @@ public class Item {
     /**
      * Статус о том, доступна или нет вещь для аренды;
      */
-    @Column
-    private Boolean available;
+    @Column(name = "is_available")
+    private Boolean isAvailable;
 
 
     @ManyToOne
-    @JoinColumn(nullable = false, name = "owner")
+    @JoinColumn(nullable = false, name = "owner_id")
     private User owner;
 
     @ManyToOne
-    @JoinColumn(name = "request")
+    @JoinColumn(name = "request_id")
     private ItemRequest request;
 
     @Override

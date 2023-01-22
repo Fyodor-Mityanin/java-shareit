@@ -6,6 +6,7 @@ import lombok.ToString;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.time.Instant;
 
 /**
@@ -14,7 +15,7 @@ import java.time.Instant;
  * В ответ на запрос другие пользователи могут добавить нужную вещь.
  */
 @Entity
-@Table(name = "request")
+@Table(name = "requests")
 @Getter
 @Setter
 @ToString
@@ -24,19 +25,20 @@ public class ItemRequest {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     /**
      * Текст запроса, содержащий описание требуемой вещи
      */
     @Column
+    @Size(max = 255)
     private String description;
 
     /**
      * Пользователь, создавший запрос
      */
     @ManyToOne
-    @JoinColumn(nullable = false, name = "requester")
+    @JoinColumn(nullable = false, name = "requester_id")
     private User requester;
 
     /**
