@@ -10,6 +10,8 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.UserMapper;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BookingMapper {
 
@@ -53,5 +55,11 @@ public class BookingMapper {
                 .status(status)
                 .build();
         return toObject(bookingDto, item, booker);
+    }
+
+    public static List<BookingDto> toDtos(@NonNull List<Booking> bookings) {
+        List<BookingDto> dtos = new ArrayList<>();
+        bookings.forEach(booking -> dtos.add(toDto(booking)));
+        return dtos;
     }
 }
