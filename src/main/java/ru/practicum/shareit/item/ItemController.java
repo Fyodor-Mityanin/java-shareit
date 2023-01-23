@@ -33,10 +33,10 @@ public class ItemController {
         return itemService.update(userId, itemId, itemDto);
     }
 
-    @GetMapping("/{id}")
-    public ItemDto getOneById(@PathVariable long id) {
-        log.info("/item/" + id + " getOneById");
-        return itemService.getById(id);
+    @GetMapping("/{itemId}")
+    public ItemDto getOneById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
+        log.info("/item/" + itemId + " getOneById");
+        return itemService.getByIdWithBookings(userId, itemId);
     }
 
     @GetMapping

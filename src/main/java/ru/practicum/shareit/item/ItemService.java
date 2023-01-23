@@ -2,13 +2,16 @@ package ru.practicum.shareit.item;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.error.exeptions.ItemNotFoundException;
 import ru.practicum.shareit.error.exeptions.UserNotFoundException;
+import ru.practicum.shareit.item.dto.ItemBookingDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,16 +21,19 @@ public class ItemService {
     private final ItemValidation itemValidation;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
 
     @Autowired
     public ItemService(
             ItemValidation itemValidation,
             ItemRepository itemRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            BookingRepository bookingRepository
     ) {
         this.itemValidation = itemValidation;
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
+        this.bookingRepository = bookingRepository;
     }
 
     public ItemDto create(Long userId, ItemDto itemDto) {
@@ -64,20 +70,52 @@ public class ItemService {
         return ItemMapper.toDto(updatedItem);
     }
 
-    public ItemDto getById(Long id) {
-        Item item = itemRepository.findById(id)
+    public ItemDto getByIdWithBookings(Long userId, Long itemId) {
+        Item item = itemRepository.findById(itemId)
                 .orElseThrow(
-                        () -> new ItemNotFoundException(String.format("Предмет с id %d не найден", id))
+                        () -> new ItemNotFoundException(String.format("Предмет с id %d не найден", itemId))
                 );
-        return ItemMapper.toDto(item);
+        ItemDto itemDto = ItemMapper.toDto(item);
+        if (Objects.equals(item.getOwner().getId(), userId)) {
+            fillBookings(itemDto);
+        }
+        return itemDto;
     }
 
     public List<ItemDto> getAllByUserId(Long userId) {
-        return ItemMapper.toDtos(itemRepository.findAllByOwnerId(userId));
+        List<ItemDto> itemDtos = ItemMapper.toDtos(itemRepository.findAllByOwnerIdOrderById(userId));
+        itemDtos.forEach(this::fillBookings);
+        return itemDtos;
     }
+
 
     public List<ItemDto> searchByName(String text) {
         List<Item> items = itemRepository.findAllByDescriptionContainingIgnoreCaseAndIsAvailableIsTrue(text);
         return ItemMapper.toDtos(items);
+    }
+
+    private void fillBookings(ItemDto itemDto) {
+        bookingRepository.findFirstByItem_IdAndItem_Owner_IdAndEndDateLessThanOrderByEndDateDesc(
+                itemDto.getId(),
+                itemDto.getOwner(),
+                LocalDateTime.now()
+        ).ifPresent(booking -> {
+            ItemBookingDto lastItemBooking = ItemBookingDto.builder()
+                    .id(booking.getId())
+                    .bookerId(booking.getBooker().getId())
+                    .build();
+            itemDto.setLastBooking(lastItemBooking);
+        });
+        bookingRepository.findFirstByItem_IdAndItem_Owner_IdAndStartDateGreaterThanOrderByStartDateAsc(
+                itemDto.getId(),
+                itemDto.getOwner(),
+                LocalDateTime.now()
+        ).ifPresent(booking -> {
+            ItemBookingDto nextItemBooking = ItemBookingDto.builder()
+                    .id(booking.getId())
+                    .bookerId(booking.getBooker().getId())
+                    .build();
+            itemDto.setNextBooking(nextItemBooking);
+        });
     }
 }

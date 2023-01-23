@@ -32,10 +32,7 @@ public class BookingController {
     @PatchMapping("/{bookingId}")
     public BookingDto approve(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long bookingId, @RequestParam @NotBlank Boolean approved) {
         log.info("/bookings approve: " + bookingId);
-        if (approved) {
-            return bookingService.approve(userId, bookingId);
-        }
-        return null;
+        return bookingService.approve(userId, bookingId, approved);
     }
 
     @GetMapping("/{bookingId}")

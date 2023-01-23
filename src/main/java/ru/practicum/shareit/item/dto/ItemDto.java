@@ -12,4 +12,6 @@ public class ItemDto {
     private Boolean available;
     private Long owner;
     private Long request;
+    private ItemBookingDto lastBooking;
+    private ItemBookingDto nextBooking;
 }

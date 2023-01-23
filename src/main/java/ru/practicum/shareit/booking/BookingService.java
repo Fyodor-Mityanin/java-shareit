@@ -17,6 +17,7 @@ import ru.practicum.shareit.user.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -33,23 +34,34 @@ public class BookingService {
     }
 
 
-    public BookingDto create(BookingRequestDto bookingRequestDto, Long userId) {
+    public BookingDto create(BookingRequestDto bookingRequestDto, Long bookerId) {
         Item item = itemRepository.findById(bookingRequestDto.getItemId()).orElseThrow(
                 () -> new ItemNotFoundException("Предмет не найден")
         );
         if (!item.getIsAvailable()) {
             throw new ItemNotAvailableException("Предмет недоступен");
         }
-        User user = userRepository.findById(userId).orElseThrow(
+        if (Objects.equals(item.getOwner().getId(), bookerId)) {
+            throw new BookingImpossibleException("Нельзя заказать у самого себя");
+        }
+        User user = userRepository.findById(bookerId).orElseThrow(
                 () -> new UserNotFoundException("Юзер не найден")
         );
+        List<Booking> crossBookings = bookingRepository.findCrossBookings(
+                bookingRequestDto.getItemId(),
+                bookingRequestDto.getStart(),
+                bookingRequestDto.getEnd()
+        );
+        if (crossBookings.size() != 0) {
+            throw new BookingImpossibleException("На эти даты уже забронено");
+        }
         Booking booking = BookingMapper.toObject(bookingRequestDto, item, user, BookingStatus.WAITING);
         booking = bookingRepository.save(booking);
-        itemRepository.updateAvailable(false, item.getId());
         return BookingMapper.toDto(booking);
+
     }
 
-    public BookingDto approve(Long userId, Long bookingId) {
+    public BookingDto approve(Long userId, Long bookingId, Boolean approved) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("Юзер не найден")
         );
@@ -62,8 +74,13 @@ public class BookingService {
         if (!booking.getItem().getOwner().equals(user)) {
             throw new BookingPermissionDeniedException("Это не ваша вещь, что бы её распоряжаться");
         }
-        bookingRepository.updateStatus(BookingStatus.APPROVED, booking.getId());
-        booking.setStatus(BookingStatus.APPROVED);
+        if (approved) {
+            bookingRepository.updateStatus(BookingStatus.APPROVED, booking.getId());
+            booking.setStatus(BookingStatus.APPROVED);
+        } else {
+            bookingRepository.updateStatus(BookingStatus.REJECTED, booking.getId());
+            booking.setStatus(BookingStatus.REJECTED);
+        }
         return BookingMapper.toDto(booking);
     }
 

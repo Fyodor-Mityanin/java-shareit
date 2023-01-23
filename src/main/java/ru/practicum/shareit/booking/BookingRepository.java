@@ -48,4 +48,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("select b from Booking b where b.id = :bookingId and (b.booker.id = :userId or b.item.owner.id = :userId)")
     Optional<Booking> findByIdAndUserID(@NonNull Long bookingId, @NonNull Long userId);
+
+    @Query("select b from Booking b " +
+            "where b.item.id = :itemId " +
+            "and ((b.startDate between :start and :end or b.endDate between :start and :end) " +
+            "or (b.startDate <= :start and b.endDate >= :end))")
+    List<Booking> findCrossBookings(@NonNull Long itemId, @NonNull LocalDateTime start, @NonNull LocalDateTime end);
+
+    Optional<Booking> findFirstByItem_IdAndItem_Owner_IdAndEndDateLessThanOrderByEndDateDesc(@NonNull Long itemId, @NonNull Long ownerId, @NonNull LocalDateTime now);
+
+    Optional<Booking> findFirstByItem_IdAndItem_Owner_IdAndStartDateGreaterThanOrderByStartDateAsc(@NonNull Long itemId, @NonNull Long ownerId, @NonNull LocalDateTime now);
 }
