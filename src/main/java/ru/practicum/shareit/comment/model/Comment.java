@@ -1,13 +1,14 @@
-package ru.practicum.shareit.comment;
+package ru.practicum.shareit.comment.model;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comments")
@@ -33,4 +34,7 @@ public class Comment {
     @JoinColumn(name = "author_id")
     @ToString.Exclude
     private User author;
+
+    @Column
+    private LocalDateTime created = LocalDateTime.now();
 }

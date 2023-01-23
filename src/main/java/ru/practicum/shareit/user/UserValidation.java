@@ -6,6 +6,7 @@ import ru.practicum.shareit.error.exeptions.UserDuplicateEmailException;
 import ru.practicum.shareit.error.exeptions.UserNotFoundException;
 import ru.practicum.shareit.error.exeptions.UserValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 
 @Slf4j
 @Component

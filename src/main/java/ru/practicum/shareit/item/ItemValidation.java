@@ -6,6 +6,7 @@ import ru.practicum.shareit.error.exeptions.ItemNotFoundException;
 import ru.practicum.shareit.error.exeptions.ItemOwnershipException;
 import ru.practicum.shareit.error.exeptions.ItemValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserValidation;
 
 @Component

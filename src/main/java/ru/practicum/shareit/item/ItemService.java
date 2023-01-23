@@ -3,13 +3,19 @@ package ru.practicum.shareit.item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.comment.CommentRepository;
+import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.dto.CommentMapper;
+import ru.practicum.shareit.comment.model.Comment;
+import ru.practicum.shareit.error.exeptions.CommentImpossibleException;
 import ru.practicum.shareit.error.exeptions.ItemNotFoundException;
 import ru.practicum.shareit.error.exeptions.UserNotFoundException;
 import ru.practicum.shareit.item.dto.ItemBookingDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,18 +28,20 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
+    private final CommentRepository commentRepository;
 
     @Autowired
     public ItemService(
             ItemValidation itemValidation,
             ItemRepository itemRepository,
             UserRepository userRepository,
-            BookingRepository bookingRepository
-    ) {
+            BookingRepository bookingRepository,
+            CommentRepository commentRepository) {
         this.itemValidation = itemValidation;
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
+        this.commentRepository = commentRepository;
     }
 
     public ItemDto create(Long userId, ItemDto itemDto) {
@@ -75,7 +83,9 @@ public class ItemService {
                 .orElseThrow(
                         () -> new ItemNotFoundException(String.format("Предмет с id %d не найден", itemId))
                 );
+        List<CommentDto> commentDtos = CommentMapper.toDtos(commentRepository.findByItem_Id(itemId), item.getOwner());
         ItemDto itemDto = ItemMapper.toDto(item);
+        itemDto.getComments().addAll(commentDtos);
         if (Objects.equals(item.getOwner().getId(), userId)) {
             fillBookings(itemDto);
         }
@@ -117,5 +127,24 @@ public class ItemService {
                     .build();
             itemDto.setNextBooking(nextItemBooking);
         });
+    }
+
+    public CommentDto createComment(Long userId, Long itemId, String text) {
+        User author = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException(String.format("Юзер с id %d не найден", userId))
+        );
+        Item item = itemRepository.findById(itemId).orElseThrow(
+                () -> new ItemNotFoundException(String.format("Предмет с id %d не найден", itemId))
+        );
+        if (bookingRepository.findFirstByItem_IdAndBooker_IdAndEndDateLessThan(item.getId(), author.getId(), LocalDateTime.now()).isEmpty()) {
+            throw new CommentImpossibleException("Юзер не букал предмет");
+        }
+        Comment comment = new Comment();
+        comment.setAuthor(author);
+        comment.setItem(item);
+        comment.setText(text);
+        Comment savedComment = commentRepository.save(comment);
+        return CommentMapper.toDto(savedComment, author);
+
     }
 }
