@@ -83,7 +83,7 @@ public class ItemService {
                 .orElseThrow(
                         () -> new ItemNotFoundException(String.format("Предмет с id %d не найден", itemId))
                 );
-        List<CommentDto> commentDtos = CommentMapper.toDtos(commentRepository.findByItem_Id(itemId), item.getOwner());
+        List<CommentDto> commentDtos = commentRepository.findByItemIdWithAuthor(itemId);
         ItemDto itemDto = ItemMapper.toDto(item);
         itemDto.getComments().addAll(commentDtos);
         if (Objects.equals(item.getOwner().getId(), userId)) {
