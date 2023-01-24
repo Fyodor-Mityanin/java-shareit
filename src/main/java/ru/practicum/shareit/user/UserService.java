@@ -7,7 +7,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.error.exeptions.UserDuplicateEmailException;
 import ru.practicum.shareit.error.exeptions.UserNotFoundException;
-import ru.practicum.shareit.error.exeptions.UserValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
@@ -49,7 +48,7 @@ public class UserService {
                     }
                 }
             }
-            throw new UserValidationException("Непредвиденная ошибка");
+            throw new UserDuplicateEmailException("Непредвиденная ошибка");
         }
     }
 
