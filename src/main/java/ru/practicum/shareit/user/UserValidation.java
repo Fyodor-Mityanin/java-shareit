@@ -24,6 +24,9 @@ public class UserValidation {
         if (userDto.getEmail() == null) {
             throw new UserValidationException("Необходима почта");
         }
+        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
+            throw new UserDuplicateEmailException(String.format("Юзер с email %s уже существует", userDto.getEmail()));
+        }
         if (!userDto.getEmail().matches(REGEX_PATTERN)) {
             throw new UserValidationException("Почта не валидна");
         }
