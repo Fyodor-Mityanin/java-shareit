@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.dto.CommentRequestDto;
 import ru.practicum.shareit.error.exeptions.CommentIsEmptyException;
 import ru.practicum.shareit.item.dto.ItemDto;
 
@@ -11,7 +12,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -30,12 +30,11 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto postComment(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId, @Valid @RequestBody @NotBlank Map<String, String> json) {
-        String text = json.get("text");
-        if (text == null || text.isBlank()) {
+    public CommentDto postComment(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId, @Valid @RequestBody CommentRequestDto comment) {
+        if (comment.getText() == null || comment.getText().isBlank()) {
             throw new CommentIsEmptyException("Коммент пуст");
         }
-        return itemService.createComment(userId, itemId, text);
+        return itemService.createComment(userId, itemId, comment.getText());
     }
 
     @PatchMapping("/{id}")
