@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.error.exeptions.UserDuplicateEmailException;
 import ru.practicum.shareit.error.exeptions.UserNotFoundException;
@@ -14,9 +15,8 @@ public class UserValidation {
     private static final String REGEX_PATTERN = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
     private final UserRepository userRepository;
 
-    public UserValidation(
-            UserRepository userRepository
-    ) {
+    @Autowired
+    public UserValidation(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

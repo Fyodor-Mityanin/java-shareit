@@ -60,4 +60,18 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Optional<Booking> findFirstByItem_IdAndItem_Owner_IdAndStartDateGreaterThanOrderByStartDateAsc(@NonNull Long itemId, @NonNull Long ownerId, @NonNull LocalDateTime now);
 
     Optional<Booking> findFirstByItem_IdAndBooker_IdAndEndDateLessThan(Long itemId, Long bookerId, LocalDateTime endDate);
+
+    @Query(value = "select b1.* " +
+            "from bookings b1 " +
+            "inner join (select item_id, MAX(end_time) max_end_time from bookings where end_time < (:now) group by item_id) b2 " +
+            "on b1.item_id = b2.item_id and b1.end_time = b2.max_end_time " +
+            "where b1.item_id in (:itemIds)", nativeQuery = true)
+    List<Booking> findLastItemBookings(@Param("itemIds") @NonNull List<Long> itemIds, @Param("now") @NonNull LocalDateTime now);
+
+    @Query(value = "select b1.* " +
+            "from bookings b1 " +
+            "inner join (select item_id, MIN(start_time) min_end_time from bookings where start_time > (:now) group by item_id) b2 " +
+            "on b1.item_id = b2.item_id and b1.start_time = b2.min_end_time " +
+            "where b1.item_id in (:itemIds)", nativeQuery = true)
+    List<Booking> findNextItemBookings(@Param("itemIds") @NonNull List<Long> itemIds, @Param("now") @NonNull LocalDateTime now);
 }

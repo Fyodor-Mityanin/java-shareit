@@ -17,10 +17,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/items")
 public class ItemController {
-    private final ItemService itemService;
+    private final ItemServiceImpl itemService;
 
     @Autowired
-    public ItemController(ItemService itemService) {
+    public ItemController(ItemServiceImpl itemService) {
         this.itemService = itemService;
     }
 
