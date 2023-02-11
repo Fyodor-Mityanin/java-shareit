@@ -3,6 +3,9 @@ package ru.practicum.shareit.item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.dto.CommentRequestDto;
+import ru.practicum.shareit.error.exeptions.CommentIsEmptyException;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.Valid;
@@ -14,41 +17,44 @@ import java.util.List;
 @RestController
 @RequestMapping("/items")
 public class ItemController {
-    private final ItemService itemService;
+    private final ItemServiceImpl itemService;
 
     @Autowired
-    public ItemController(ItemService itemService) {
+    public ItemController(ItemServiceImpl itemService) {
         this.itemService = itemService;
     }
 
     @PostMapping
     public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemDto itemDto) {
-        log.info("/item create: " + itemDto.toString());
         return itemService.create(userId, itemDto);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto postComment(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId, @Valid @RequestBody CommentRequestDto comment) {
+        if (comment.getText() == null || comment.getText().isBlank()) {
+            throw new CommentIsEmptyException("Коммент пуст");
+        }
+        return itemService.createComment(userId, itemId, comment.getText());
     }
 
     @PatchMapping("/{id}")
     public ItemDto patch(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemDto itemDto, @PathVariable("id") long itemId) {
-        log.info("/item/" + itemId + " patch: " + itemDto.toString());
         return itemService.update(userId, itemId, itemDto);
     }
 
-    @GetMapping("/{id}")
-    public ItemDto getOneById(@PathVariable long id) {
-        log.info("/item/" + id + " getOneById");
-        return itemService.getById(id);
+    @GetMapping("/{itemId}")
+    public ItemDto getOneById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
+        return itemService.getByIdWithBookings(userId, itemId);
     }
 
     @GetMapping
     public List<ItemDto> findAllByUserId(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        log.info("/item findAllByUserId");
         return itemService.getAllByUserId(userId);
     }
 
     @GetMapping("/search")
     //тут почему-то NotBlank никак не реагирует на бланк
     public List<ItemDto> searchByName(@RequestParam @NotBlank String text) {
-        log.info("/item/search" + text);
         if (text.isBlank()) {
             return Collections.emptyList();
         }

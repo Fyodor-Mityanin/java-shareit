@@ -1,8 +1,8 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.NonNull;
-import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +14,10 @@ public class ItemMapper {
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
-                .available(item.getAvailable())
+                .available(item.getIsAvailable())
                 .owner(item.getOwner().getId())
                 .request(item.getRequest() != null ? item.getRequest().getId() : null)
+                .comments(new ArrayList<>())
                 .build();
     }
 
@@ -27,12 +28,12 @@ public class ItemMapper {
     }
 
     public static Item toObject(@NonNull ItemDto itemDto, User user) {
-        return Item.builder()
-                .id(itemDto.getId())
-                .name(itemDto.getName())
-                .description(itemDto.getDescription())
-                .owner(user)
-                .available(itemDto.getAvailable())
-                .build();
+        Item item = new Item();
+        item.setId(itemDto.getId());
+        item.setName(itemDto.getName());
+        item.setDescription(itemDto.getDescription());
+        item.setOwner(user);
+        item.setIsAvailable(itemDto.getAvailable());
+        return item;
     }
 }
