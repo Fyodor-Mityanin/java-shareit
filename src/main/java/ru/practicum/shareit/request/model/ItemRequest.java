@@ -1,4 +1,4 @@
-package ru.practicum.shareit.request;
+package ru.practicum.shareit.request.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +7,7 @@ import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 /**
  * Ещё одна сущность, которая вам понадобится, — запрос вещи ItemRequest.
@@ -25,6 +25,7 @@ public class ItemRequest {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     /**
@@ -39,11 +40,12 @@ public class ItemRequest {
      */
     @ManyToOne
     @JoinColumn(nullable = false, name = "requester_id")
+    @ToString.Exclude
     private User requester;
 
     /**
      * Дата и время создания запроса
      */
     @Column
-    private Instant created = Instant.now();
+    private LocalDateTime created = LocalDateTime.now();
 }
