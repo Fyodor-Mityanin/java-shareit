@@ -3,11 +3,14 @@ package ru.practicum.shareit.request.model;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ещё одна сущность, которая вам понадобится, — запрос вещи ItemRequest.
@@ -42,6 +45,10 @@ public class ItemRequest {
     @JoinColumn(nullable = false, name = "requester_id")
     @ToString.Exclude
     private User requester;
+
+    @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<Item> items = new ArrayList<>();
 
     /**
      * Дата и время создания запроса

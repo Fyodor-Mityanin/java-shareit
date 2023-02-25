@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
@@ -127,6 +128,38 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toDtos(bookings);
     }
 
+    @Override
+    public List<BookingDto> getAllByBookerAndState(Long userId, BookingState state, Pageable pageable) {
+        List<Booking> bookings;
+        switch (state) {
+            case ALL:
+                bookings = bookingRepository.findAllByBooker_IdOrderByStartDateDesc(userId, pageable);
+                break;
+            case CURRENT:
+                bookings = bookingRepository.findCurrentByBookerId(userId, LocalDateTime.now(), pageable);
+                break;
+            case PAST:
+                bookings = bookingRepository.findPastByBookerId(userId, LocalDateTime.now(), pageable);
+                break;
+            case FUTURE:
+                bookings = bookingRepository.findFutureByBookerIdPageable(userId, LocalDateTime.now(), pageable);
+                break;
+            case WAITING:
+                bookings = bookingRepository.findByBookerIdAndStatusOrderByStartDateDesc(userId, BookingStatus.WAITING, pageable);
+                break;
+            case REJECTED:
+                bookings = bookingRepository.findByBookerIdAndStatusOrderByStartDateDesc(userId, BookingStatus.REJECTED, pageable);
+                break;
+            default:
+                bookings = Collections.emptyList();
+        }
+        if (bookings.size() == 0) {
+            throw new BookingNotFoundException("Букинги не найдены");
+        }
+        return BookingMapper.toDtos(bookings);
+    }
+
+
     public List<BookingDto> getAllByOwnerAndState(Long userId, BookingState state) {
         List<Booking> bookings;
         switch (state) {
@@ -147,6 +180,37 @@ public class BookingServiceImpl implements BookingService {
                 break;
             case REJECTED:
                 bookings = bookingRepository.findByItem_Owner_IdAndStatusOrderByStartDateDesc(userId, BookingStatus.REJECTED);
+                break;
+            default:
+                bookings = Collections.emptyList();
+        }
+        if (bookings.size() == 0) {
+            throw new BookingNotFoundException("Букинги не найдены");
+        }
+        return BookingMapper.toDtos(bookings);
+    }
+
+    @Override
+    public List<BookingDto> getAllByOwnerAndState(Long userId, BookingState state, Pageable pageable) {
+        List<Booking> bookings;
+        switch (state) {
+            case ALL:
+                bookings = bookingRepository.findAllByItem_Owner_IdOrderByStartDateDesc(userId, pageable);
+                break;
+            case CURRENT:
+                bookings = bookingRepository.findCurrentByOwnerIdPageable(userId, LocalDateTime.now(), pageable);
+                break;
+            case PAST:
+                bookings = bookingRepository.findPastByOwnerIdPageable(userId, LocalDateTime.now(), pageable);
+                break;
+            case FUTURE:
+                bookings = bookingRepository.findFutureByOwnerIdPageable(userId, LocalDateTime.now(), pageable);
+                break;
+            case WAITING:
+                bookings = bookingRepository.findByItem_Owner_IdAndStatusOrderByStartDateDesc(userId, BookingStatus.WAITING, pageable);
+                break;
+            case REJECTED:
+                bookings = bookingRepository.findByItem_Owner_IdAndStatusOrderByStartDateDesc(userId, BookingStatus.REJECTED, pageable);
                 break;
             default:
                 bookings = Collections.emptyList();

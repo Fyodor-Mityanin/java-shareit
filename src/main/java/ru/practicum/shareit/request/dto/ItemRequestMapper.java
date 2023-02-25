@@ -1,12 +1,12 @@
 package ru.practicum.shareit.request.dto;
 
 import lombok.NonNull;
+import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ItemRequestMapper {
@@ -17,17 +17,8 @@ public class ItemRequestMapper {
                 .description(itemRequest.getDescription())
                 .created(itemRequest.getCreated())
                 .requester(UserMapper.toDto(itemRequest.getRequester()))
-                .items(Collections.emptyList())
+                .items(ItemMapper.toDtos(itemRequest.getItems()))
                 .build();
-    }
-
-    public static ItemRequest toObject(@NonNull ItemRequestDto itemRequestDto, User requester) {
-        ItemRequest itemRequest = new ItemRequest();
-        itemRequest.setId(itemRequestDto.getId());
-        itemRequest.setDescription(itemRequestDto.getDescription());
-        itemRequest.setCreated(itemRequestDto.getCreated());
-        itemRequest.setRequester(requester);
-        return itemRequest;
     }
 
     public static ItemRequest toObject(@NonNull ItemRequestRequestDto itemRequestRequestDto, User requester) {

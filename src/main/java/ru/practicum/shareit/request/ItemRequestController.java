@@ -38,15 +38,21 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestDto> findAll(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
             @RequestParam(required = false) Integer from,
             @RequestParam(required = false) Integer size
     ) {
         if (from != null && size != null) {
             Sort sort = Sort.by("created").descending();
             Pageable pageable = PageRequest.of(from, size, sort);
-            return itemRequestService.findAll(pageable);
+            return itemRequestService.findAllExceptRequester(userId, pageable);
         } else {
-            return itemRequestService.findAll();
+            return itemRequestService.findAllExceptRequester(userId);
         }
+    }
+
+    @GetMapping("/{requestId}")
+    public ItemRequestDto getOneById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long requestId) {
+        return itemRequestService.getOneById(userId, requestId);
     }
 }

@@ -2,9 +2,9 @@ package ru.practicum.shareit.request;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.error.exeptions.ItemRequestNotFoundException;
 import ru.practicum.shareit.error.exeptions.UserNotFoundException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestMapper;
@@ -51,14 +51,25 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return ItemRequestMapper.toDtos(requests);
     }
 
-    public List<ItemRequestDto> findAll(Pageable pageable) {
-        Page<ItemRequest> requests = itemRequestRepository.findAll(pageable);
-        return ItemRequestMapper.toDtos(requests.toList());
+    public List<ItemRequestDto> findAllExceptRequester(Long userId, Pageable pageable) {
+        List<ItemRequest> requests = itemRequestRepository.findByRequester_IdNotOrderByCreatedDesc(userId, pageable);
+        return ItemRequestMapper.toDtos(requests);
     }
 
     @Override
-    public List<ItemRequestDto> findAll() {
-        List<ItemRequest> requests = itemRequestRepository.findAll();
+    public List<ItemRequestDto> findAllExceptRequester(Long userId) {
+        List<ItemRequest> requests = itemRequestRepository.findByRequester_IdNotOrderByCreatedDesc(userId);
         return ItemRequestMapper.toDtos(requests);
+    }
+
+    @Override
+    public ItemRequestDto getOneById(Long userId, Long requestId) {
+        userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException(String.format("Юзер с id %d не найден", userId))
+        );
+        ItemRequest itemRequest = itemRequestRepository.findById(requestId).orElseThrow(
+                () -> new ItemRequestNotFoundException(String.format("Запрос с id %d не найден", requestId))
+        );
+        return ItemRequestMapper.toDto(itemRequest);
     }
 }

@@ -48,8 +48,20 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleItemRequestNotFoundException(final ItemRequestNotFoundException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleItemNotAvailableException(final ItemNotAvailableException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlePaginationValidationException(final PaginationValidationException e) {
         return new ErrorResponse(e.getMessage());
     }
 

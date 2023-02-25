@@ -12,7 +12,9 @@ public interface ItemRequestService {
 
     List<ItemRequestDto> getAllByOwner(Long userId);
 
-    List<ItemRequestDto> findAll(Pageable pageable);
+    List<ItemRequestDto> findAllExceptRequester(Long userId, Pageable pageable);
 
-    List<ItemRequestDto> findAll();
+    List<ItemRequestDto> findAllExceptRequester(Long userId);
+
+    ItemRequestDto getOneById(Long userId, Long requestId);
 }
