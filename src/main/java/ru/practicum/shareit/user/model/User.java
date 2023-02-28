@@ -40,7 +40,7 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
-        return id != null && id.equals(((User) o).getId());
+        return email != null && email.equals(((User) o).getEmail());
     }
 
     @Override

@@ -55,4 +55,24 @@ public class ItemRequest {
      */
     @Column
     private LocalDateTime created = LocalDateTime.now();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ItemRequest)) return false;
+
+        ItemRequest that = (ItemRequest) o;
+
+        if (!getDescription().equals(that.getDescription())) return false;
+        if (!getRequester().equals(that.getRequester())) return false;
+        return getItems().equals(that.getItems());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getDescription().hashCode();
+        result = 31 * result + getRequester().hashCode();
+        result = 31 * result + getItems().hashCode();
+        return result;
+    }
 }

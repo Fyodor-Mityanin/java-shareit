@@ -62,4 +62,28 @@ public class Booking {
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Booking)) return false;
+
+        Booking booking = (Booking) o;
+
+        if (!getStartDate().equals(booking.getStartDate())) return false;
+        if (!getEndDate().equals(booking.getEndDate())) return false;
+        if (!getItem().equals(booking.getItem())) return false;
+        if (!getBooker().equals(booking.getBooker())) return false;
+        return getStatus() == booking.getStatus();
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getStartDate().hashCode();
+        result = 31 * result + getEndDate().hashCode();
+        result = 31 * result + getItem().hashCode();
+        result = 31 * result + getBooker().hashCode();
+        result = 31 * result + getStatus().hashCode();
+        return result;
+    }
 }
