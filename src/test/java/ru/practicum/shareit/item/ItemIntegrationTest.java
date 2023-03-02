@@ -353,7 +353,7 @@ public class ItemIntegrationTest {
     @Test
     @Order(21)
     public void itemUpdateAvailable2Test() throws Exception {
-        ItemDto itemDto = makeItemDto( null, null, false);
+        ItemDto itemDto = makeItemDto(null, null, false);
         mvc.perform(patch("/items/2")
                         .content(mapper.writeValueAsString(itemDto))
                         .header("X-Sharer-User-Id", 4)
@@ -406,7 +406,7 @@ public class ItemIntegrationTest {
     @Test
     @Order(24)
     public void itemUpdateAvailable3Test() throws Exception {
-        ItemDto itemDto = makeItemDto( null, null, true);
+        ItemDto itemDto = makeItemDto(null, null, true);
         mvc.perform(patch("/items/2")
                         .content(mapper.writeValueAsString(itemDto))
                         .header("X-Sharer-User-Id", 4)
