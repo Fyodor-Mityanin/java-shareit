@@ -885,4 +885,112 @@ public class BookingIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
-}
+
+    @Test
+    @Order(54)
+    public void bookingGetAllByOwnerCurrentTest() throws Exception {
+        long userId = 1;
+        String state = "CURRENT";
+        mvc.perform(get("/bookings/owner")
+                        .param("state", state)
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Order(55)
+    public void bookingGetAllByOwnerPastTest() throws Exception {
+        long userId = 1;
+        String state = "PAST";
+        mvc.perform(get("/bookings/owner")
+                        .param("state", state)
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Order(56)
+    public void bookingGetAllByOwnerCurrentPaginationTest() throws Exception {
+        long userId = 1;
+        String state = "CURRENT";
+        mvc.perform(get("/bookings/owner")
+                        .param("state", state)
+                        .param("from", "0")
+                        .param("size", "1")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Order(57)
+    public void bookingGetAllByOwnerPastPaginationTest() throws Exception {
+        long userId = 1;
+        String state = "PAST";
+        mvc.perform(get("/bookings/owner")
+                        .param("state", state)
+                        .param("from", "0")
+                        .param("size", "1")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Order(58)
+    public void bookingGetAllByOwnerFuturePaginationTest() throws Exception {
+        long userId = 1;
+        String state = "FUTURE";
+        mvc.perform(get("/bookings/owner")
+                        .param("state", state)
+                        .param("from", "0")
+                        .param("size", "1")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(59)
+    public void bookingGetAllByOwnerWaitingPaginationTest() throws Exception {
+        long userId = 1;
+        String state = "WAITING";
+        mvc.perform(get("/bookings/owner")
+                        .param("state", state)
+                        .param("from", "0")
+                        .param("size", "1")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Order(60)
+    public void bookingGetAllByOwnerRejectedPaginationTest() throws Exception {
+        long userId = 1;
+        String state = "REJECTED";
+        mvc.perform(get("/bookings/owner")
+                        .param("state", state)
+                        .param("from", "0")
+                        .param("size", "1")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+    }
