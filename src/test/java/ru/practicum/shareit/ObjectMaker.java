@@ -19,6 +19,14 @@ public class ObjectMaker {
                 .build();
     }
 
+    public static UserDto makeUserDto(long id, String name, String email) {
+        return UserDto.builder()
+                .id(id)
+                .name(name)
+                .email(email)
+                .build();
+    }
+
     public static User makeUser(long id, String name, String email) {
         User user = new User();
         user.setId(id);
