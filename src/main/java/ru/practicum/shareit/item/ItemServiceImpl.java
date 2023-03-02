@@ -148,27 +148,17 @@ public class ItemServiceImpl implements ItemService {
                 .boxed()
                 .collect(Collectors.toList());
         bookingRepository.findLastItemBookings(itemIds, LocalDateTime.now())
-                .forEach(booking -> itemDtos.stream()
-                        .filter(i -> Objects.equals(i.getId(), booking.getItem().getId()))
-                        .forEach(i -> {
-                                    ItemBookingDto lastItemBooking = ItemBookingDto.builder()
-                                            .id(booking.getId())
-                                            .bookerId(booking.getBooker().getId())
-                                            .build();
-                                    i.setLastBooking(lastItemBooking);
-                                }
+                .forEach(booking -> itemDtos.stream().filter(i -> Objects.equals(i.getId(), booking.getItem().getId()))
+                        .forEach(i -> i.setLastBooking(ItemBookingDto.builder().id(booking.getId())
+                                .bookerId(booking.getBooker().getId())
+                                .build())
                         )
                 );
         bookingRepository.findNextItemBookings(itemIds, LocalDateTime.now())
-                .forEach(booking -> itemDtos.stream()
-                        .filter(i -> Objects.equals(i.getId(), booking.getItem().getId()))
-                        .forEach(i -> {
-                                    ItemBookingDto nextItemBooking = ItemBookingDto.builder()
-                                            .id(booking.getId())
-                                            .bookerId(booking.getBooker().getId())
-                                            .build();
-                                    i.setNextBooking(nextItemBooking);
-                                }
+                .forEach(booking -> itemDtos.stream().filter(i -> Objects .equals(i.getId(), booking.getItem().getId()))
+                        .forEach(i -> i.setNextBooking(ItemBookingDto.builder().id(booking.getId())
+                                .bookerId(booking.getBooker().getId())
+                                .build())
                         )
                 );
     }
