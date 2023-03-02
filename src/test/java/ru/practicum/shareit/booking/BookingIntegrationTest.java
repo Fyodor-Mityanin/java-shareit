@@ -561,6 +561,107 @@ public class BookingIntegrationTest {
                 .andExpect(jsonPath("$.nextBooking", is(nullValue())));
     }
 
+    @Test
+    @Order(34)
+    public void bookingCreate4Test() throws Exception {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime start = now.plusSeconds(3);
+        LocalDateTime end = now.plusDays(1);
+        long userId = 1;
+        long itemId = 3;
+        BookingRequestDto bookingRequestDto = makeBookingRequestDto(itemId, start, end);
+        mvc.perform(post("/bookings")
+                        .content(mapper.writeValueAsString(bookingRequestDto))
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(4L), Long.class));
+    }
 
+    @Test
+    @Order(35)
+    public void bookingGetAllByUserWaitingTest() throws Exception {
+        long userId = 1;
+        String state = "WAITING";
+        mvc.perform(get("/bookings")
+                        .param("state", state)
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(4L), Long.class))
+                .andExpect(jsonPath("$[0].status", is(state)));
+    }
+
+    @Test
+    @Order(36)
+    public void bookingGetAllByOwnerWaitingTest() throws Exception {
+        long userId = 4;
+        String state = "WAITING";
+        mvc.perform(get("/bookings/owner")
+                        .param("state", state)
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(4L), Long.class))
+                .andExpect(jsonPath("$[0].status", is(state)));
+    }
+
+    @Test
+    @Order(37)
+    public void bookingSetReject2Test() throws Exception {
+        long userId = 4;
+        long bookingId = 4;
+        mvc.perform(patch("/bookings/" + bookingId)
+                        .param("approved", "false")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(bookingId), Long.class))
+                .andExpect(jsonPath("$.status", is("REJECTED")));
+    }
+
+    @Test
+    @Order(38)
+    public void bookingGetAllByUserRejectedTest() throws Exception {
+        long userId = 1;
+        String state = "REJECTED";
+        mvc.perform(get("/bookings")
+                        .param("state", state)
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(4L), Long.class))
+                .andExpect(jsonPath("$[0].status", is(state)));
+    }
+
+    @Test
+    @Order(39)
+    public void bookingGetAllByOwnerRejectedTest() throws Exception {
+        long userId = 4;
+        String state = "REJECTED";
+        mvc.perform(get("/bookings/owner")
+                        .param("state", state)
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(4L), Long.class))
+                .andExpect(jsonPath("$[0].status", is(state)));
+    }
 
 }

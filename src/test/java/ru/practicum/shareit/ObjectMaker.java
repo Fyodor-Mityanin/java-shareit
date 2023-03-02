@@ -3,6 +3,7 @@ package ru.practicum.shareit;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.comment.dto.CommentRequestDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -106,5 +107,11 @@ public class ObjectMaker {
                 .description(description)
                 .available(isAvailable)
                 .build();
+    }
+
+    public static CommentRequestDto makeCommentRequestDto(String text) {
+        CommentRequestDto commentRequestDto = new CommentRequestDto();
+        commentRequestDto.setText(text);
+        return commentRequestDto;
     }
 }
