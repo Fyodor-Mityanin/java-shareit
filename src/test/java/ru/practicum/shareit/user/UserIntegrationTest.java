@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -27,7 +28,7 @@ import static ru.practicum.shareit.ObjectMaker.makeUserDto;
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-test.properties")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class UserControllerTest {
+public class UserIntegrationTest {
 
     @Autowired
     private MockMvc mvc;
@@ -35,13 +36,13 @@ public class UserControllerTest {
     @Autowired
     private ObjectMapper mapper;
 
-    public UserControllerTest() {
+    public UserIntegrationTest() {
     }
 
     @Test
     @Order(1)
     public void userCreateTest() throws Exception {
-        UserDto userDto = makeUserDto("Пётр", "ivanov@mail.ru");
+        UserDto userDto = makeUserDto("user", "user@user.com");
 
         mvc.perform(post("/users")
                         .content(mapper.writeValueAsString(userDto))
@@ -56,9 +57,9 @@ public class UserControllerTest {
 
     @Test
     @Order(2)
-    public void userCreateDuplicateEmail() throws Exception {
+    public void userCreateDuplicateEmailTest() throws Exception {
 
-        UserDto userDto = makeUserDto("Пётр2", "ivanov@mail.ru");
+        UserDto userDto = makeUserDto("user", "user@user.com");
 
         mvc.perform(post("/users")
                         .content(mapper.writeValueAsString(userDto))
@@ -67,5 +68,74 @@ public class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict());
     }
+
+    @Test
+    @Order(3)
+    public void userCreateFailNoEmailTest() throws Exception {
+
+        UserDto userDto = makeUserDto("user", null);
+
+        mvc.perform(post("/users")
+                        .content(mapper.writeValueAsString(userDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Order(4)
+    public void userCreateFailInvalidEmailTest() throws Exception {
+
+        UserDto userDto = makeUserDto("user", "user.com");
+
+        mvc.perform(post("/users")
+                        .content(mapper.writeValueAsString(userDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Order(5)
+    public void userUpdateTest() throws Exception {
+
+        UserDto userDto = makeUserDto("update", "update@user.com");
+
+        mvc.perform(patch("/users/1")
+                        .content(mapper.writeValueAsString(userDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(anything()), Long.class))
+                .andExpect(jsonPath("$.name", is(userDto.getName())))
+                .andExpect(jsonPath("$.email", is(userDto.getEmail())));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
