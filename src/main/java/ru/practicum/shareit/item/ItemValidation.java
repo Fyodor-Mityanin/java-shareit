@@ -5,29 +5,32 @@ import org.springframework.stereotype.Component;
 import ru.practicum.shareit.error.exeptions.ItemNotFoundException;
 import ru.practicum.shareit.error.exeptions.ItemOwnershipException;
 import ru.practicum.shareit.error.exeptions.ItemValidationException;
+import ru.practicum.shareit.error.exeptions.UserNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.UserValidation;
+import ru.practicum.shareit.user.UserRepository;
 
 @Component
 public class ItemValidation {
 
-    private final UserValidation userValidation;
-
     private final ItemRepository itemRepository;
+
+    private final UserRepository userRepository;
 
     @Autowired
     public ItemValidation(
-            UserValidation userValidation,
-            ItemRepository itemRepository
+            ItemRepository itemRepository,
+            UserRepository userRepository
     ) {
-        this.userValidation = userValidation;
         this.itemRepository = itemRepository;
+        this.userRepository = userRepository;
     }
 
 
     public void validateCreation(ItemDto itemDto) {
-        userValidation.validateItemCreate(itemDto.getOwner());
+        userRepository.findById(itemDto.getOwner()).orElseThrow(
+                () -> new UserNotFoundException(String.format("Юзер с id %d не найден", itemDto.getOwner()))
+        );
         if (itemDto.getAvailable() == null) {
             throw new ItemValidationException("Необходима доступность");
         }

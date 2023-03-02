@@ -40,16 +40,4 @@ public class UserValidation {
                 () -> new UserNotFoundException(String.format("Юзер с id %d не найден", userDto.getId()))
         );
     }
-
-    public void validateDelete(long id) {
-        if (userRepository.findById(id).isEmpty()) {
-            throw new UserNotFoundException(String.format("Юзер с id %d не найден", id));
-        }
-    }
-
-    public void validateItemCreate(long id) {
-        if (userRepository.findById(id).isEmpty()) {
-            throw new UserNotFoundException(String.format("Юзер с id %d не найден", id));
-        }
-    }
 }

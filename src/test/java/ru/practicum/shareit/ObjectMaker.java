@@ -1,5 +1,6 @@
 package ru.practicum.shareit;
 
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -70,6 +71,14 @@ public class ObjectMaker {
         booking.setBooker(user);
         booking.setStatus(status);
         return booking;
+    }
+
+    public static BookingRequestDto makeBookingRequestDto(long itemId, LocalDateTime start, LocalDateTime end) {
+        return BookingRequestDto.builder()
+                .itemId(itemId)
+                .start(start)
+                .end(end)
+                .build();
     }
 
     public static ItemDto makeItemDto(long id, String name, String description, long userId, boolean isAvailable) {
