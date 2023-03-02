@@ -155,7 +155,7 @@ public class ItemServiceImpl implements ItemService {
                         )
                 );
         bookingRepository.findNextItemBookings(itemIds, LocalDateTime.now())
-                .forEach(booking -> itemDtos.stream().filter(i -> Objects .equals(i.getId(), booking.getItem().getId()))
+                .forEach(booking -> itemDtos.stream().filter(i -> Objects.equals(i.getId(), booking.getItem().getId()))
                         .forEach(i -> i.setNextBooking(ItemBookingDto.builder().id(booking.getId())
                                 .bookerId(booking.getBooker().getId())
                                 .build())
