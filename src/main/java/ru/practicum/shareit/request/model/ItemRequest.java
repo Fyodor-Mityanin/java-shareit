@@ -67,12 +67,4 @@ public class ItemRequest {
         if (!getRequester().equals(that.getRequester())) return false;
         return getItems().equals(that.getItems());
     }
-
-    @Override
-    public int hashCode() {
-        int result = getDescription().hashCode();
-        result = 31 * result + getRequester().hashCode();
-        result = 31 * result + getItems().hashCode();
-        return result;
-    }
 }

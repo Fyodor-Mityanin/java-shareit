@@ -76,14 +76,4 @@ public class Booking {
         if (!getBooker().equals(booking.getBooker())) return false;
         return getStatus() == booking.getStatus();
     }
-
-    @Override
-    public int hashCode() {
-        int result = getStartDate().hashCode();
-        result = 31 * result + getEndDate().hashCode();
-        result = 31 * result + getItem().hashCode();
-        result = 31 * result + getBooker().hashCode();
-        result = 31 * result + getStatus().hashCode();
-        return result;
-    }
 }

@@ -99,7 +99,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public List<BookingDto> getAllByBookerAndState(Long userId, BookingState state) {
-        List<Booking> bookings;
+        List<Booking> bookings = Collections.emptyList();
         switch (state) {
             case ALL:
                 bookings = bookingRepository.findAllByBooker_IdOrderByStartDateDesc(userId);
@@ -119,8 +119,6 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED:
                 bookings = bookingRepository.findByBookerIdAndStatusOrderByStartDateDesc(userId, BookingStatus.REJECTED);
                 break;
-            default:
-                bookings = Collections.emptyList();
         }
         if (bookings.size() == 0) {
             throw new BookingNotFoundException("Букинги не найдены");
@@ -130,7 +128,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getAllByBookerAndState(Long userId, BookingState state, Pageable pageable) {
-        List<Booking> bookings;
+        List<Booking> bookings = Collections.emptyList();
         switch (state) {
             case ALL:
                 bookings = bookingRepository.findAllByBooker_IdOrderByStartDateDesc(userId, pageable);
@@ -150,8 +148,6 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED:
                 bookings = bookingRepository.findByBookerIdAndStatusOrderByStartDateDesc(userId, BookingStatus.REJECTED, pageable);
                 break;
-            default:
-                bookings = Collections.emptyList();
         }
         if (bookings.size() == 0) {
             throw new BookingNotFoundException("Букинги не найдены");
@@ -161,7 +157,7 @@ public class BookingServiceImpl implements BookingService {
 
 
     public List<BookingDto> getAllByOwnerAndState(Long userId, BookingState state) {
-        List<Booking> bookings;
+        List<Booking> bookings = Collections.emptyList();
         switch (state) {
             case ALL:
                 bookings = bookingRepository.findAllByItem_Owner_IdOrderByStartDateDesc(userId);
@@ -181,8 +177,6 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED:
                 bookings = bookingRepository.findByItem_Owner_IdAndStatusOrderByStartDateDesc(userId, BookingStatus.REJECTED);
                 break;
-            default:
-                bookings = Collections.emptyList();
         }
         if (bookings.size() == 0) {
             throw new BookingNotFoundException("Букинги не найдены");
@@ -192,7 +186,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getAllByOwnerAndState(Long userId, BookingState state, Pageable pageable) {
-        List<Booking> bookings;
+        List<Booking> bookings = Collections.emptyList();
         switch (state) {
             case ALL:
                 bookings = bookingRepository.findAllByItem_Owner_IdOrderByStartDateDesc(userId, pageable);
@@ -212,8 +206,6 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED:
                 bookings = bookingRepository.findByItem_Owner_IdAndStatusOrderByStartDateDesc(userId, BookingStatus.REJECTED, pageable);
                 break;
-            default:
-                bookings = Collections.emptyList();
         }
         if (bookings.size() == 0) {
             throw new BookingNotFoundException("Букинги не найдены");
