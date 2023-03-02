@@ -777,4 +777,112 @@ public class BookingIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
     }
+
+    @Test
+    @Order(47)
+    public void bookingGetAllByBookerCurrentTest() throws Exception {
+        long userId = 1;
+        String state = "CURRENT";
+        mvc.perform(get("/bookings")
+                        .param("state", state)
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Order(48)
+    public void bookingGetAllByBookerPastTest() throws Exception {
+        long userId = 1;
+        String state = "PAST";
+        mvc.perform(get("/bookings")
+                        .param("state", state)
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(49)
+    public void bookingGetAllByBookerCurrentPaginationTest() throws Exception {
+        long userId = 1;
+        String state = "CURRENT";
+        mvc.perform(get("/bookings")
+                        .param("state", state)
+                        .param("from", "0")
+                        .param("size", "1")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Order(50)
+    public void bookingGetAllByBookerPastPaginationTest() throws Exception {
+        long userId = 1;
+        String state = "PAST";
+        mvc.perform(get("/bookings")
+                        .param("state", state)
+                        .param("from", "0")
+                        .param("size", "1")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(51)
+    public void bookingGetAllByBookerFuturePaginationTest() throws Exception {
+        long userId = 1;
+        String state = "FUTURE";
+        mvc.perform(get("/bookings")
+                        .param("state", state)
+                        .param("from", "0")
+                        .param("size", "1")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(52)
+    public void bookingGetAllByBookerWaitingPaginationTest() throws Exception {
+        long userId = 1;
+        String state = "WAITING";
+        mvc.perform(get("/bookings")
+                        .param("state", state)
+                        .param("from", "0")
+                        .param("size", "1")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Order(53)
+    public void bookingGetAllByBookerRejectedPaginationTest() throws Exception {
+        long userId = 1;
+        String state = "REJECTED";
+        mvc.perform(get("/bookings")
+                        .param("state", state)
+                        .param("from", "0")
+                        .param("size", "1")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 }
