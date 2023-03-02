@@ -81,4 +81,21 @@ public class ObjectMaker {
                 .available(isAvailable)
                 .build();
     }
+
+    public static ItemDto makeItemDto(String name, String description, Boolean isAvailable) {
+        return ItemDto.builder()
+                .name(name)
+                .description(description)
+                .available(isAvailable)
+                .build();
+    }
+
+    public static ItemDto makeItemDto(long id, String name, String description, Boolean isAvailable) {
+        return ItemDto.builder()
+                .id(id)
+                .name(name)
+                .description(description)
+                .available(isAvailable)
+                .build();
+    }
 }
