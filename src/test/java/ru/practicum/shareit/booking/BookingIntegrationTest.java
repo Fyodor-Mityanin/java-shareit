@@ -664,4 +664,117 @@ public class BookingIntegrationTest {
                 .andExpect(jsonPath("$[0].status", is(state)));
     }
 
+    @Test
+    @Order(39)
+    public void bookingGetAllByUserWithPagination00Test() throws Exception {
+        long userId = 1;
+        mvc.perform(get("/bookings")
+                        .param("from", "0")
+                        .param("size", "0")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Order(40)
+    public void bookingGetAllByOwnerWithPagination00Test() throws Exception {
+        long userId = 1;
+        mvc.perform(get("/bookings/owner")
+                        .param("from", "0")
+                        .param("size", "0")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @Order(41)
+    public void bookingGetAllByUserWithPaginationNegativeFromTest() throws Exception {
+        long userId = 1;
+        mvc.perform(get("/bookings")
+                        .param("from", "-1")
+                        .param("size", "20")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Order(42)
+    public void bookingGetAllByOwnerWithPaginationNegativeFromTest() throws Exception {
+        long userId = 1;
+        mvc.perform(get("/bookings/owner")
+                        .param("from", "-1")
+                        .param("size", "20")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Order(43)
+    public void bookingGetAllByUserWithPaginationNegativeSizeTest() throws Exception {
+        long userId = 1;
+        mvc.perform(get("/bookings")
+                        .param("from", "0")
+                        .param("size", "-1")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Order(44)
+    public void bookingGetAllByOwnerWithPaginationNegativeSizeTest() throws Exception {
+        long userId = 1;
+        mvc.perform(get("/bookings/owner")
+                        .param("from", "0")
+                        .param("size", "-1")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Order(45)
+    public void bookingGetAllByUserWithPaginationTest() throws Exception {
+        long userId = 1;
+        mvc.perform(get("/bookings")
+                        .param("from", "2")
+                        .param("size", "2")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)));
+    }
+
+    @Test
+    @Order(46)
+    public void bookingGetAllByOwnerWithPaginationTest() throws Exception {
+        long userId = 1;
+        mvc.perform(get("/bookings/owner")
+                        .param("from", "0")
+                        .param("size", "1")
+                        .header("X-Sharer-User-Id", userId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)));
+    }
 }
