@@ -96,12 +96,6 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleRequestIsEmptyException(final RequestIsEmptyException e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleItemOwnershipException(final ItemOwnershipException e) {
         return new ErrorResponse(e.getMessage());

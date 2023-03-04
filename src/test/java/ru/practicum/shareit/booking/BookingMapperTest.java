@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static ru.practicum.shareit.ObjectMaker.*;
 
+@SpringBootTest
 public class BookingMapperTest {
 
     @Test
