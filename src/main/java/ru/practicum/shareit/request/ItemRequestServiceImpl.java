@@ -13,7 +13,6 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -33,7 +32,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public ItemRequestDto create(@Valid ItemRequestRequestDto itemRequestDto, Long userId) {
+    public ItemRequestDto create(ItemRequestRequestDto itemRequestDto, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("Юзер не найден")
         );
@@ -53,12 +52,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     public List<ItemRequestDto> findAllExceptRequester(Long userId, Pageable pageable) {
         List<ItemRequest> requests = itemRequestRepository.findByRequester_IdNotOrderByCreatedDesc(userId, pageable);
-        return ItemRequestMapper.toDtos(requests);
-    }
-
-    @Override
-    public List<ItemRequestDto> findAllExceptRequester(Long userId) {
-        List<ItemRequest> requests = itemRequestRepository.findByRequester_IdNotOrderByCreatedDesc(userId);
         return ItemRequestMapper.toDtos(requests);
     }
 

@@ -21,6 +21,7 @@ import java.util.Optional;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
 import static ru.practicum.shareit.ObjectMaker.makeItemRequest;
 import static ru.practicum.shareit.ObjectMaker.makeUser;
 
@@ -40,18 +41,18 @@ class ItemRequestServiceTest {
     @DisplayName("JUnit test for getAll ItemRequest method")
     void givenItemRequestList_whenGetAllItemRequest_thenReturnItemRequestList() {
         //given
-        User user1 = makeUser(1, "Пётр", "ivanov@mail.ru");
-        User user2 = makeUser(2, "Пётр2", "ivanov2@mail.ru");
+        User user1 = makeUser(1L, "Пётр", "ivanov@mail.ru");
+        User user2 = makeUser(2L, "Пётр2", "ivanov2@mail.ru");
 
         ItemRequest itemRequest1 = makeItemRequest(1, "Описание", user1, Collections.emptyList());
         ItemRequest itemRequest2 = makeItemRequest(2, "Описание2", user2, Collections.emptyList());
 
         Mockito
-                .when(repository.findByRequester_IdNotOrderByCreatedDesc(Mockito.anyLong()))
+                .when(repository.findByRequester_IdNotOrderByCreatedDesc(Mockito.anyLong(), any()))
                 .thenReturn(List.of(itemRequest1, itemRequest2));
 
         // when
-        List<ItemRequestDto> itemRequestList = service.findAllExceptRequester(Mockito.anyLong());
+        List<ItemRequestDto> itemRequestList = service.findAllExceptRequester(Mockito.anyLong(), any());
 
         // then
         assertThat(itemRequestList, notNullValue());
@@ -64,7 +65,7 @@ class ItemRequestServiceTest {
         //given
         String description = "описание";
 
-        User user = makeUser(1, "Пётр", "ivanov@mail.ru");
+        User user = makeUser(1L, "Пётр", "ivanov@mail.ru");
         ItemRequestRequestDto request = new ItemRequestRequestDto();
         request.setDescription(description);
 

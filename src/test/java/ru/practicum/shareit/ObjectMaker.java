@@ -30,7 +30,7 @@ public class ObjectMaker {
                 .build();
     }
 
-    public static User makeUser(long id, String name, String email) {
+    public static User makeUser(Long id, String name, String email) {
         User user = new User();
         user.setId(id);
         user.setName(name);
@@ -47,7 +47,7 @@ public class ObjectMaker {
         return itemRequest;
     }
 
-    public static Item makeItem(long id, String name, String description, User user, boolean isAvailable) {
+    public static Item makeItem(Long id, String name, String description, User user, boolean isAvailable) {
         Item item = new Item();
         item.setId(id);
         item.setName(name);
@@ -58,7 +58,7 @@ public class ObjectMaker {
     }
 
     public static Booking makeBooking(
-            long id,
+            Long id,
             LocalDateTime start,
             LocalDateTime end,
             Item item,

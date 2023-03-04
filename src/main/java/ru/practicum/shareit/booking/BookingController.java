@@ -46,38 +46,31 @@ public class BookingController {
     public List<BookingDto> findAllByOwner(
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @RequestParam(defaultValue = "ALL") BookingState state,
-            @RequestParam(required = false) Integer from,
-            @RequestParam(required = false) Integer size
+            @RequestParam(defaultValue = "0") Integer from,
+            @RequestParam(defaultValue = "20") Integer size
     ) {
-        if (from != null && size != null) {
-            if (from < 0 || size < 0) {
-                throw new PaginationValidationException("Ошибка в параметрах пагинации");
-            }
-            Sort sort = Sort.by("startDate").descending();
-            Pageable pageable = PageRequest.of(from, size, sort);
-            return bookingService.getAllByOwnerAndState(userId, state, pageable);
-        } else {
-            return bookingService.getAllByOwnerAndState(userId, state);
+        if (from < 0 || size < 0) {
+            throw new PaginationValidationException("Ошибка в параметрах пагинации");
         }
+        Sort sort = Sort.by("startDate").descending();
+        Pageable pageable = PageRequest.of(from, size, sort);
+        return bookingService.getAllByOwnerAndState(userId, state, pageable);
     }
 
     @GetMapping
     public List<BookingDto> findAllByBooker(
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @RequestParam(defaultValue = "ALL") BookingState state,
-            @RequestParam(required = false) Integer from,
-            @RequestParam(required = false) Integer size
+            @RequestParam(defaultValue = "0") Integer from,
+            @RequestParam(defaultValue = "20") Integer size
     ) {
-        if (from != null && size != null) {
-            if (from < 0 || size <= 0) {
-                throw new PaginationValidationException("Ошибка в параметрах пагинации");
-            }
-            Sort sort = Sort.by("startDate").descending();
-            int start = from / size;
-            Pageable pageable = PageRequest.of(start, size, sort);
-            return bookingService.getAllByBookerAndState(userId, state, pageable);
-        } else {
-            return bookingService.getAllByBookerAndState(userId, state);
+
+        if (from < 0 || size <= 0) {
+            throw new PaginationValidationException("Ошибка в параметрах пагинации");
         }
+        Sort sort = Sort.by("startDate").descending();
+        int start = from / size;
+        Pageable pageable = PageRequest.of(start, size, sort);
+        return bookingService.getAllByBookerAndState(userId, state, pageable);
     }
 }

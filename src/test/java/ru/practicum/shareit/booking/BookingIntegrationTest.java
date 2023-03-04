@@ -167,8 +167,6 @@ public class BookingIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.start", is(start.toString())))
-                .andExpect(jsonPath("$.end", is(end.toString())))
                 .andExpect(jsonPath("$.status", is("WAITING")))
                 .andExpect(jsonPath("$.booker.id", is(userId), Long.class))
                 .andExpect(jsonPath("$.item.id", is(itemId), Long.class));

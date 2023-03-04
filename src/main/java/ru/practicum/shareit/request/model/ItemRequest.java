@@ -11,7 +11,6 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Ещё одна сущность, которая вам понадобится, — запрос вещи ItemRequest.
@@ -64,13 +63,11 @@ public class ItemRequest {
 
         ItemRequest that = (ItemRequest) o;
 
-        if (!getDescription().equals(that.getDescription())) return false;
-        if (!getRequester().equals(that.getRequester())) return false;
-        return getItems().equals(that.getItems());
+        return getId() != null ? getId().equals(that.getId()) : that.getId() == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDescription(), getRequester(), getItems());
+        return getId() != null ? getId().hashCode() : 0;
     }
 }

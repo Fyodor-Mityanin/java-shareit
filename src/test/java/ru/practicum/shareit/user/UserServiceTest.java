@@ -36,8 +36,8 @@ class UserServiceTest {
     @DisplayName("JUnit test for getAll Users method")
     void givenUserList_whenGetAllUser_thenReturnUserList() {
         //given
-        User user1 = makeUser(1, "Пётр", "ivanov@mail.ru");
-        User user2 = makeUser(2, "Пётр2", "ivanov2@mail.ru");
+        User user1 = makeUser(1L, "Пётр", "ivanov@mail.ru");
+        User user2 = makeUser(2L, "Пётр2", "ivanov2@mail.ru");
 
         Mockito.when(repository.findAll()).thenReturn(List.of(user1,user2));
 
@@ -55,7 +55,7 @@ class UserServiceTest {
     void givenUserDtoObject_whenSaveUserDto_thenReturnUserObject() {
         //given
         UserDto userDto = makeUserDto("Пётр", "ivanov@mail.ru");
-        User user = makeUser(1, "Пётр", "ivanov@mail.ru");
+        User user = makeUser(1L, "Пётр", "ivanov@mail.ru");
         Mockito.when(repository.save(UserMapper.toObject(userDto))).thenReturn(user);
         Mockito.doNothing().when(validation).validateCreation(userDto);
 

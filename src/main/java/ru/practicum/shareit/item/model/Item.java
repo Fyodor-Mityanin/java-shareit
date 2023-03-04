@@ -46,6 +46,7 @@ public class Item {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "owner_id")
+    @ToString.Exclude
     private User owner;
 
     @ManyToOne
@@ -56,11 +57,14 @@ public class Item {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Item)) return false;
-        return id != null && id.equals(((Item) o).getId());
+
+        Item item = (Item) o;
+
+        return getId() != null ? getId().equals(item.getId()) : item.getId() == null;
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return getId() != null ? getId().hashCode() : 0;
     }
 }

@@ -23,8 +23,7 @@ import java.util.Optional;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static ru.practicum.shareit.ObjectMaker.makeBooking;
-import static ru.practicum.shareit.ObjectMaker.makeItem;
+import static ru.practicum.shareit.ObjectMaker.*;
 
 @ExtendWith(MockitoExtension.class)
 class BookingServiceTest {
@@ -47,10 +46,10 @@ class BookingServiceTest {
         //given
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = LocalDateTime.now().plusDays(2);
-        User owner = makeUser(1, "Пётр", "ivanov@mail.ru");
-        User booker = makeUser(2, "Иван", "petrov@mail.ru");
-        Item item = makeItem(1, "Итем","Описание", owner, true);
-        Booking booking = makeBooking(1, start, end, item, booker, BookingStatus.WAITING);
+        User owner = makeUser(1L, "Пётр", "ivanov@mail.ru");
+        User booker = makeUser(2L, "Иван", "petrov@mail.ru");
+        Item item = makeItem(1L, "Итем","Описание", owner, true);
+        Booking booking = makeBooking(1L, start, end, item, booker, BookingStatus.WAITING);
         BookingRequestDto bookingRequestDto = makeBookingRequestDto(1, start, end);
 
 
@@ -74,22 +73,5 @@ class BookingServiceTest {
         assertThat(savedBookingDto.getStart(), equalTo(booking.getStartDate()));
         assertThat(savedBookingDto.getItem().getId(), equalTo(booking.getItem().getId()));
         assertThat(savedBookingDto.getStatus(), equalTo(booking.getStatus()));
-    }
-
-    private BookingRequestDto makeBookingRequestDto(long itemId, LocalDateTime start, LocalDateTime end) {
-        return BookingRequestDto.builder()
-                .itemId(itemId)
-                .start(start)
-                .end(end)
-                .build();
-
-    }
-
-    private User makeUser(long id, String name, String email) {
-        User user = new User();
-        user.setId(id);
-        user.setName(name);
-        user.setEmail(email);
-        return user;
     }
 }

@@ -98,34 +98,6 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toDto(booking);
     }
 
-    public List<BookingDto> getAllByBookerAndState(Long userId, BookingState state) {
-        List<Booking> bookings = Collections.emptyList();
-        switch (state) {
-            case ALL:
-                bookings = bookingRepository.findAllByBooker_IdOrderByStartDateDesc(userId);
-                break;
-            case CURRENT:
-                bookings = bookingRepository.findCurrentByBookerId(userId, LocalDateTime.now());
-                break;
-            case PAST:
-                bookings = bookingRepository.findPastByBookerId(userId, LocalDateTime.now());
-                break;
-            case FUTURE:
-                bookings = bookingRepository.findFutureByBookerId(userId, LocalDateTime.now());
-                break;
-            case WAITING:
-                bookings = bookingRepository.findByBookerIdAndStatusOrderByStartDateDesc(userId, BookingStatus.WAITING);
-                break;
-            case REJECTED:
-                bookings = bookingRepository.findByBookerIdAndStatusOrderByStartDateDesc(userId, BookingStatus.REJECTED);
-                break;
-        }
-        if (bookings.size() == 0) {
-            throw new BookingNotFoundException("Букинги не найдены");
-        }
-        return BookingMapper.toDtos(bookings);
-    }
-
     @Override
     public List<BookingDto> getAllByBookerAndState(Long userId, BookingState state, Pageable pageable) {
         List<Booking> bookings = Collections.emptyList();
@@ -147,35 +119,6 @@ public class BookingServiceImpl implements BookingService {
                 break;
             case REJECTED:
                 bookings = bookingRepository.findByBookerIdAndStatusOrderByStartDateDesc(userId, BookingStatus.REJECTED, pageable);
-                break;
-        }
-        if (bookings.size() == 0) {
-            throw new BookingNotFoundException("Букинги не найдены");
-        }
-        return BookingMapper.toDtos(bookings);
-    }
-
-
-    public List<BookingDto> getAllByOwnerAndState(Long userId, BookingState state) {
-        List<Booking> bookings = Collections.emptyList();
-        switch (state) {
-            case ALL:
-                bookings = bookingRepository.findAllByItem_Owner_IdOrderByStartDateDesc(userId);
-                break;
-            case CURRENT:
-                bookings = bookingRepository.findCurrentByOwnerId(userId, LocalDateTime.now());
-                break;
-            case PAST:
-                bookings = bookingRepository.findPastByOwnerId(userId, LocalDateTime.now());
-                break;
-            case FUTURE:
-                bookings = bookingRepository.findFutureByOwnerId(userId, LocalDateTime.now());
-                break;
-            case WAITING:
-                bookings = bookingRepository.findByItem_Owner_IdAndStatusOrderByStartDateDesc(userId, BookingStatus.WAITING);
-                break;
-            case REJECTED:
-                bookings = bookingRepository.findByItem_Owner_IdAndStatusOrderByStartDateDesc(userId, BookingStatus.REJECTED);
                 break;
         }
         if (bookings.size() == 0) {

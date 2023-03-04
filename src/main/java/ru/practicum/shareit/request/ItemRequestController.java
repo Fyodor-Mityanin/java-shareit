@@ -5,7 +5,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.error.exeptions.RequestIsEmptyException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestRequestDto;
 
@@ -25,9 +24,6 @@ public class ItemRequestController {
 
     @PostMapping
     public ItemRequestDto create(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemRequestRequestDto request) {
-        if (request.getDescription() == null || request.getDescription().isBlank()) {
-            throw new RequestIsEmptyException("Реквест пуст");
-        }
         return itemRequestService.create(request, userId);
     }
 
@@ -39,16 +35,12 @@ public class ItemRequestController {
     @GetMapping("/all")
     public List<ItemRequestDto> findAll(
             @RequestHeader("X-Sharer-User-Id") Long userId,
-            @RequestParam(required = false) Integer from,
-            @RequestParam(required = false) Integer size
+            @RequestParam(defaultValue = "0") Integer from,
+            @RequestParam(defaultValue = "20") Integer size
     ) {
-        if (from != null && size != null) {
-            Sort sort = Sort.by("created").descending();
-            Pageable pageable = PageRequest.of(from, size, sort);
-            return itemRequestService.findAllExceptRequester(userId, pageable);
-        } else {
-            return itemRequestService.findAllExceptRequester(userId);
-        }
+        Sort sort = Sort.by("created").descending();
+        Pageable pageable = PageRequest.of(from, size, sort);
+        return itemRequestService.findAllExceptRequester(userId, pageable);
     }
 
     @GetMapping("/{requestId}")

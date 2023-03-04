@@ -45,10 +45,10 @@ class ItemServiceTest {
     @DisplayName("JUnit test for getAll Item method")
     void givenItemList_whenGetAllItem_thenReturnItemList() {
         //given
-        User user = makeUser(1, "Пётр", "ivanov@mail.ru");
+        User user = makeUser(1L, "Пётр", "ivanov@mail.ru");
 
-        Item item1 = makeItem(1, "Итем","Описание", user, true);
-        Item item2 = makeItem(2, "Итем1","Описание1", user, true);
+        Item item1 = makeItem(1L, "Итем","Описание", user, true);
+        Item item2 = makeItem(2L, "Итем1","Описание1", user, true);
 
         when(repository.findAllByOwnerIdOrderById(user.getId()))
                 .thenReturn(List.of(item1, item2));
@@ -69,9 +69,9 @@ class ItemServiceTest {
     @DisplayName("JUnit test for create Item method")
     void givenItemDtoObject_whenSaveItemDto_thenReturnItemObject() {
         //given
-        User user = makeUser(1, "Пётр", "ivanov@mail.ru");
+        User user = makeUser(1L, "Пётр", "ivanov@mail.ru");
         ItemDto itemDto = makeItemDto(1, "Итем","Описание", user.getId(), true);
-        Item item = makeItem(1, "Итем","Описание", user, true);
+        Item item = makeItem(1L, "Итем","Описание", user, true);
 
         when(userRepository.findById(user.getId()))
                 .thenReturn(Optional.of(user));

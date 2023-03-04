@@ -8,7 +8,6 @@ import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 /**
  * Для поиска вещей должен быть организован поиск. Чтобы воспользоваться нужной вещью, её требуется забронировать.
@@ -68,12 +67,14 @@ public class Booking {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Booking)) return false;
+
         Booking booking = (Booking) o;
-        return getItem().equals(booking.getItem()) && getBooker().equals(booking.getBooker()) && getStatus() == booking.getStatus();
+
+        return getId() != null ? getId().equals(booking.getId()) : booking.getId() == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getItem(), getBooker(), getStatus());
+        return getId() != null ? getId().hashCode() : 0;
     }
 }
