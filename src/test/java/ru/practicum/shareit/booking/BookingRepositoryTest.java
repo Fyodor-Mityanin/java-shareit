@@ -26,7 +26,7 @@ public class BookingRepositoryTest {
     private TestEntityManager entityManager;
 
     @Autowired
-    BookingRepository repository;
+    private BookingRepository repository;
 
     @Test
     public void shouldFindNoBookingsIfRepositoryIsEmpty() {

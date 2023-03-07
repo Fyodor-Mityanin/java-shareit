@@ -19,7 +19,7 @@ public class CommentBookingRepositoryTest {
     private TestEntityManager entityManager;
 
     @Autowired
-    CommentRepository repository;
+    private CommentRepository repository;
 
     @Test
     public void shouldFindByItemIdWithAuthor() {
