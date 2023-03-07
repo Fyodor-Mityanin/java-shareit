@@ -91,7 +91,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public BookingDto getOneByIdAndUserId(Long bookingId, Long userId) {
-        Booking booking = bookingRepository.findByIdAndUserID(bookingId, userId)
+        Booking booking = bookingRepository.findByIdAndUserId(bookingId, userId)
                 .orElseThrow(
                         () -> new BookingNotFoundException(String.format("Букинг с id %d и юзером %d не найден", bookingId, userId))
                 );
@@ -112,7 +112,7 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findPastByBookerId(userId, LocalDateTime.now(), pageable);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findFutureByBookerIdPageable(userId, LocalDateTime.now(), pageable);
+                bookings = bookingRepository.findFutureByBookerId(userId, LocalDateTime.now(), pageable);
                 break;
             case WAITING:
                 bookings = bookingRepository.findByBookerIdAndStatusOrderByStartDateDesc(userId, BookingStatus.WAITING, pageable);
@@ -135,13 +135,13 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findAllByItem_Owner_IdOrderByStartDateDesc(userId, pageable);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findCurrentByOwnerIdPageable(userId, LocalDateTime.now(), pageable);
+                bookings = bookingRepository.findCurrentByOwnerId(userId, LocalDateTime.now(), pageable);
                 break;
             case PAST:
-                bookings = bookingRepository.findPastByOwnerIdPageable(userId, LocalDateTime.now(), pageable);
+                bookings = bookingRepository.findPastByOwnerId(userId, LocalDateTime.now(), pageable);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findFutureByOwnerIdPageable(userId, LocalDateTime.now(), pageable);
+                bookings = bookingRepository.findFutureByOwnerId(userId, LocalDateTime.now(), pageable);
                 break;
             case WAITING:
                 bookings = bookingRepository.findByItem_Owner_IdAndStatusOrderByStartDateDesc(userId, BookingStatus.WAITING, pageable);

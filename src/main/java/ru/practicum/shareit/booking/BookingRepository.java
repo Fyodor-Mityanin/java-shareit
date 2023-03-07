@@ -29,26 +29,26 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findCurrentByBookerId(@NonNull Long userId, @NonNull LocalDateTime now, Pageable pageable);
 
     @Query("select b from Booking b where b.item.owner.id = :userId and b.startDate <= :now and b.endDate > :now order by b.startDate desc")
-    List<Booking> findCurrentByOwnerIdPageable(@NonNull Long userId, @NonNull LocalDateTime now, Pageable pageable);
+    List<Booking> findCurrentByOwnerId(@NonNull Long userId, @NonNull LocalDateTime now, Pageable pageable);
 
     @Query("select b from Booking b where b.booker.id = :userId and b.endDate < :now order by b.startDate desc")
     List<Booking> findPastByBookerId(@NonNull Long userId, @NonNull LocalDateTime now, Pageable pageable);
 
     @Query("select b from Booking b where b.item.owner.id = :userId and b.endDate < :now order by b.startDate desc")
-    List<Booking> findPastByOwnerIdPageable(@NonNull Long userId, @NonNull LocalDateTime now, Pageable pageable);
+    List<Booking> findPastByOwnerId(@NonNull Long userId, @NonNull LocalDateTime now, Pageable pageable);
 
     @Query("select b from Booking b where b.booker.id = :userId and b.startDate > :now order by b.startDate desc")
-    List<Booking> findFutureByBookerIdPageable(@NonNull Long userId, @NonNull LocalDateTime now, Pageable pageable);
+    List<Booking> findFutureByBookerId(@NonNull Long userId, @NonNull LocalDateTime now, Pageable pageable);
 
     @Query("select b from Booking b where b.item.owner.id = :userId and b.startDate > :now order by b.startDate desc")
-    List<Booking> findFutureByOwnerIdPageable(@NonNull Long userId, @NonNull LocalDateTime now, Pageable pageable);
+    List<Booking> findFutureByOwnerId(@NonNull Long userId, @NonNull LocalDateTime now, Pageable pageable);
 
     List<Booking> findByBookerIdAndStatusOrderByStartDateDesc(@NonNull Long userId, @NonNull BookingStatus status, Pageable pageable);
 
     List<Booking> findByItem_Owner_IdAndStatusOrderByStartDateDesc(@NonNull Long userId, @NonNull BookingStatus status, Pageable pageable);
 
     @Query("select b from Booking b where b.id = :bookingId and (b.booker.id = :userId or b.item.owner.id = :userId)")
-    Optional<Booking> findByIdAndUserID(@NonNull Long bookingId, @NonNull Long userId);
+    Optional<Booking> findByIdAndUserId(@NonNull Long bookingId, @NonNull Long userId);
 
     @Query("select b from Booking b " +
             "where b.item.id = :itemId " +

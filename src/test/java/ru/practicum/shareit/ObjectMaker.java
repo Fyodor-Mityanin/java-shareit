@@ -4,6 +4,7 @@ import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.comment.dto.CommentRequestDto;
+import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestRequestDto;
@@ -120,5 +121,13 @@ public class ObjectMaker {
         ItemRequestRequestDto itemRequestRequestDto = new ItemRequestRequestDto();
         itemRequestRequestDto.setDescription(description);
         return itemRequestRequestDto;
+    }
+
+    public static Comment makeComment(String text, Item item, User author) {
+        Comment comment = new Comment();
+        comment.setText(text);
+        comment.setItem(item);
+        comment.setAuthor(author);
+        return comment;
     }
 }
