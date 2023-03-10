@@ -2,12 +2,12 @@ package ru.practicum.shareit.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -34,18 +34,18 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto create(@Valid @RequestBody UserDto userDto) {
+    public UserDto create(@RequestBody UserDto userDto) {
         return userService.create(userDto);
     }
 
     @PatchMapping("/{id}")
-    public UserDto patch(@Valid @RequestBody UserDto userDto, @PathVariable long id) {
+    public UserDto patch(@RequestBody UserDto userDto, @PathVariable long id) {
         return userService.update(id, userDto);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteOneById(@PathVariable long id) {
+    public ResponseEntity<Object> deleteOneById(@PathVariable long id) {
         userService.delete(id);
-        return id + "deleted";
+        return ResponseEntity.ok().build();
     }
 }

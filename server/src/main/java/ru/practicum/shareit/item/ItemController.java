@@ -2,21 +2,16 @@ package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.dto.CommentRequestDto;
-import ru.practicum.shareit.error.exeptions.CommentIsEmptyException;
 import ru.practicum.shareit.item.dto.ItemDto;
 
-import javax.validation.Valid;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/items")
-@Validated
 public class ItemController {
     private final ItemServiceImpl itemService;
 
@@ -26,20 +21,17 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemDto itemDto) {
+    public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ItemDto itemDto) {
         return itemService.create(userId, itemDto);
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto postComment(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId, @Valid @RequestBody CommentRequestDto comment) {
-        if (comment.getText() == null || comment.getText().isBlank()) {
-            throw new CommentIsEmptyException("Коммент пуст");
-        }
+    public CommentDto postComment(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId, @RequestBody CommentRequestDto comment) {
         return itemService.createComment(userId, itemId, comment.getText());
     }
 
     @PatchMapping("/{id}")
-    public ItemDto patch(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemDto itemDto, @PathVariable("id") long itemId) {
+    public ItemDto patch(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ItemDto itemDto, @PathVariable("id") long itemId) {
         return itemService.update(userId, itemId, itemDto);
     }
 
@@ -55,9 +47,6 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> searchByName(@RequestParam String text) {
-        if (text.isBlank()) {
-            return Collections.emptyList();
-        }
         return itemService.searchByName(text);
     }
 }

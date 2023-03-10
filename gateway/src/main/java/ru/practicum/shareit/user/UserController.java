@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.Valid;
@@ -26,25 +23,25 @@ public class UserController {
     public ResponseEntity<Object> findAll() {
         return userClient.getAll();
     }
-//
-//    @GetMapping("/{id}")
-//    public User getOneById(@PathVariable long id) {
-//        return userService.getById(id);
-//    }
-//
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getOneById(@PathVariable long id) {
+        return userClient.getById(id);
+    }
+
     @PostMapping
     public ResponseEntity<Object> create(@Valid @RequestBody UserDto userDto) {
         return userClient.create(userDto);
     }
-//
-//    @PatchMapping("/{id}")
-//    public UserDto patch(@Valid @RequestBody UserDto userDto, @PathVariable long id) {
-//        return userService.update(id, userDto);
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public String deleteOneById(@PathVariable long id) {
-//        userService.delete(id);
-//        return id + "deleted";
-//    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> patch(@Valid @RequestBody UserDto userDto, @PathVariable long id) {
+        return userClient.update(id, userDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteOneById(@PathVariable long id) {
+        return userClient.deleteOneById(id);
+    }
 }
