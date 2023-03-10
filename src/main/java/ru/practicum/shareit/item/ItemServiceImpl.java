@@ -9,11 +9,14 @@ import ru.practicum.shareit.comment.dto.CommentMapper;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.error.exeptions.CommentImpossibleException;
 import ru.practicum.shareit.error.exeptions.ItemNotFoundException;
+import ru.practicum.shareit.error.exeptions.ItemRequestNotFoundException;
 import ru.practicum.shareit.error.exeptions.UserNotFoundException;
 import ru.practicum.shareit.item.dto.ItemBookingDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequestRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -30,6 +33,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Autowired
     public ItemServiceImpl(
@@ -37,13 +41,15 @@ public class ItemServiceImpl implements ItemService {
             ItemRepository itemRepository,
             UserRepository userRepository,
             BookingRepository bookingRepository,
-            CommentRepository commentRepository
+            CommentRepository commentRepository,
+            ItemRequestRepository itemRequestRepository
     ) {
         this.itemValidation = itemValidation;
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
+        this.itemRequestRepository = itemRequestRepository;
     }
 
     public ItemDto create(Long userId, ItemDto itemDto) {
@@ -53,7 +59,13 @@ public class ItemServiceImpl implements ItemService {
         );
         itemValidation.validateCreation(itemDto);
         itemDto.setOwner(userId);
-        Item item = itemRepository.save(ItemMapper.toObject(itemDto, user));
+        ItemRequest itemRequest = null;
+        if (itemDto.getRequestId() != null) {
+            itemRequest = itemRequestRepository.findById(itemDto.getRequestId()).orElseThrow(
+                    () -> new ItemRequestNotFoundException(String.format("Реквест с id %d не найден", userId))
+            );
+        }
+        Item item = itemRepository.save(ItemMapper.toObject(itemDto, user, itemRequest));
         itemDto.setId(item.getId());
         return itemDto;
     }
@@ -75,7 +87,7 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getName() != null && !Objects.equals(updatedItemDto.getName(), itemDto.getName())) {
             updatedItemDto.setName(itemDto.getName());
         }
-        updatedItem = ItemMapper.toObject(updatedItemDto, user);
+        updatedItem = ItemMapper.toObject(updatedItemDto, user, null);
         updatedItem = itemRepository.save(updatedItem);
         return ItemMapper.toDto(updatedItem);
     }
@@ -136,27 +148,17 @@ public class ItemServiceImpl implements ItemService {
                 .boxed()
                 .collect(Collectors.toList());
         bookingRepository.findLastItemBookings(itemIds, LocalDateTime.now())
-                .forEach(booking -> itemDtos.stream()
-                        .filter(i -> Objects.equals(i.getId(), booking.getItem().getId()))
-                        .forEach(i -> {
-                                    ItemBookingDto lastItemBooking = ItemBookingDto.builder()
-                                            .id(booking.getId())
-                                            .bookerId(booking.getBooker().getId())
-                                            .build();
-                                    i.setLastBooking(lastItemBooking);
-                                }
+                .forEach(booking -> itemDtos.stream().filter(i -> Objects.equals(i.getId(), booking.getItem().getId()))
+                        .forEach(i -> i.setLastBooking(ItemBookingDto.builder().id(booking.getId())
+                                .bookerId(booking.getBooker().getId())
+                                .build())
                         )
                 );
         bookingRepository.findNextItemBookings(itemIds, LocalDateTime.now())
-                .forEach(booking -> itemDtos.stream()
-                        .filter(i -> Objects.equals(i.getId(), booking.getItem().getId()))
-                        .forEach(i -> {
-                                    ItemBookingDto nextItemBooking = ItemBookingDto.builder()
-                                            .id(booking.getId())
-                                            .bookerId(booking.getBooker().getId())
-                                            .build();
-                                    i.setNextBooking(nextItemBooking);
-                                }
+                .forEach(booking -> itemDtos.stream().filter(i -> Objects.equals(i.getId(), booking.getItem().getId()))
+                        .forEach(i -> i.setNextBooking(ItemBookingDto.builder().id(booking.getId())
+                                .bookerId(booking.getBooker().getId())
+                                .build())
                         )
                 );
     }

@@ -40,11 +40,14 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
-        return id != null && id.equals(((User) o).getId());
+
+        User user = (User) o;
+
+        return getId() != null ? getId().equals(user.getId()) : user.getId() == null;
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return getId() != null ? getId().hashCode() : 0;
     }
 }
