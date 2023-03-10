@@ -11,15 +11,15 @@ import java.util.List;
 public class ItemMapper {
 
     public static ItemDto toDto(@NonNull Item item) {
-        return ItemDto.builder()
-                .id(item.getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .available(item.getIsAvailable())
-                .owner(item.getOwner().getId())
-                .requestId(item.getRequest() != null ? item.getRequest().getId() : null)
-                .comments(new ArrayList<>())
-                .build();
+        ItemDto itemDto = new ItemDto();
+        itemDto.setId(item.getId());
+        itemDto.setName(item.getName());
+        itemDto.setDescription(item.getDescription());
+        itemDto.setAvailable(item.getIsAvailable());
+        itemDto.setOwner(item.getOwner().getId());
+        itemDto.setRequestId(item.getRequest() != null ? item.getRequest().getId() : null);
+        itemDto.setComments(new ArrayList<>());
+        return itemDto;
     }
 
     public static List<ItemDto> toDtos(@NonNull List<Item> items) {
