@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -13,6 +14,7 @@ import javax.validation.constraints.PositiveOrZero;
 @RestController
 @RequestMapping(path = "/requests")
 @Validated
+@Slf4j
 public class ItemRequestController {
 
     private final ItemRequestClient itemRequestClient;
@@ -27,11 +29,13 @@ public class ItemRequestController {
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @RequestBody @Valid ItemRequestRequestDto request
     ) {
+        log.info("Create request: userId={}, request={}", userId, request);
         return itemRequestClient.create(request, userId);
     }
 
     @GetMapping
     public ResponseEntity<Object> findAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("Find requests by owner: userId={}", userId);
         return itemRequestClient.getAllByOwner(userId);
     }
 
@@ -41,6 +45,7 @@ public class ItemRequestController {
             @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
             @Positive @RequestParam(name = "size", defaultValue = "10") Integer size
     ) {
+        log.info("Find all requests: userId={}, from={}, size={}", userId, from, size);
         return itemRequestClient.findAllExceptRequester(userId, from, size);
     }
 
@@ -49,6 +54,7 @@ public class ItemRequestController {
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @PathVariable Long requestId
     ) {
+        log.info("Get request by id: userId={}, requestId={}", userId, requestId);
         return itemRequestClient.getOneById(userId, requestId);
     }
 }

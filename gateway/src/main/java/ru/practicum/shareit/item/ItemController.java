@@ -27,6 +27,7 @@ public class ItemController {
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @Valid @RequestBody ItemDto itemDto
     ) {
+        log.info("Create item: userId={}, itemDto={}", userId, itemDto);
         return itemClient.create(userId, itemDto);
     }
 
@@ -36,6 +37,7 @@ public class ItemController {
             @PathVariable Long itemId,
             @Valid @RequestBody CommentRequestDto comment
     ) {
+        log.info("Post comment: userId={}, itemId={}, comment={}", userId, itemId, comment);
         return itemClient.createComment(userId, itemId, comment);
     }
 
@@ -45,6 +47,7 @@ public class ItemController {
             @Valid @RequestBody ItemDto itemDto,
             @PathVariable("id") long itemId
     ) {
+        log.info("Update item: userId={}, itemDto={}, itemId={}", userId, itemDto, itemId);
         return itemClient.update(userId, itemId, itemDto);
     }
 
@@ -53,16 +56,19 @@ public class ItemController {
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @PathVariable Long itemId
     ) {
+        log.info("Get item: userId={}, itemId={}", userId, itemId);
         return itemClient.getByIdWithBookings(userId, itemId);
     }
 
     @GetMapping
     public ResponseEntity<Object> findAllByUserId(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("Find all items: userId={}", userId);
         return itemClient.getAllByUserId(userId);
     }
 
     @GetMapping("/search")
     public ResponseEntity<Object> searchByName(@RequestParam String text) {
+        log.info("Search items: text={}", text);
         if (text.isBlank()) {
             return ResponseEntity.ok().body("[]");
         }

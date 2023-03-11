@@ -57,6 +57,7 @@ public class BookingController {
             @PathVariable Long bookingId,
             @RequestParam @NotNull Boolean approved
     ) {
+        log.info("Approve booking: userId={}, bookingId={}, approved={}", userId, bookingId, approved);
         return bookingClient.approve(userId, bookingId, approved);
     }
 
@@ -67,6 +68,7 @@ public class BookingController {
             @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
             @Positive @RequestParam(name = "size", defaultValue = "10") Integer size
     ) {
+        log.info("Find bookings by owner: userId={}, state={}, from={}, size={}", userId, state, from, size);
         return bookingClient.getAllByOwnerAndState(userId, state, from, size);
     }
 }
