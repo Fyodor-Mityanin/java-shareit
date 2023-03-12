@@ -7,7 +7,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,7 +20,6 @@ public class Comment {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Size(max = 255)
     @Column(name = "text")
     private String text;
 

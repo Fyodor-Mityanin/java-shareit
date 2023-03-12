@@ -10,8 +10,6 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.model.BookingState;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Slf4j
@@ -27,12 +25,12 @@ public class BookingController {
     }
 
     @PostMapping
-    public BookingDto create(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody BookingRequestDto bookingRequestDto) {
+    public BookingDto create(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody BookingRequestDto bookingRequestDto) {
         return bookingService.create(bookingRequestDto, userId);
     }
 
     @PatchMapping("/{bookingId}")
-    public BookingDto approve(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long bookingId, @RequestParam @NotBlank Boolean approved) {
+    public BookingDto approve(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long bookingId, @RequestParam Boolean approved) {
         return bookingService.approve(userId, bookingId, approved);
     }
 

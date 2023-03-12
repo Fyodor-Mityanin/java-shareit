@@ -5,7 +5,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 
 /**
  * Класс пользователя
@@ -33,7 +32,6 @@ public class User {
      * Адрес электронной почты (учтите, что два пользователя не могут иметь одинаковый адрес электронной почты).
      */
     @Column(nullable = false, unique = true)
-    @Email
     private String email;
 
     @Override

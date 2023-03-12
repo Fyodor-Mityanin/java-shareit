@@ -7,7 +7,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,6 @@ public class ItemRequest {
      * Текст запроса, содержащий описание требуемой вещи
      */
     @Column
-    @Size(max = 255)
     private String description;
 
     /**
